@@ -14,21 +14,21 @@ class Mail
         $mail = new PHPMailer(true);
 
         try {
+            $systemMail = parse_ini_file('../systemMail.ini');
+
             //Server settings
             $mail->SMTPDebug = 0;
             $mail->isSMTP();
             $mail->Host = 'websmtp.simply.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'christenbot@buckledshoes.store';
+            $mail->Username = $systemMail['mail'];
 
-            $password = parse_ini_file('../mailPassword.ini');
-
-            $mail->Password = $password['password'];
+            $mail->Password = $systemMail['password'];
             $mail->SMTPSecure = 'tls';
             $mail->Port = 587;
 
             //Recipients
-            $mail->setFrom('christenbot@buckledshoes.store', 'ChristenBot');
+            $mail->setFrom($systemMail['mail'], 'System');
             $mail->addAddress($to);     // Add a recipient
 
             // Content
