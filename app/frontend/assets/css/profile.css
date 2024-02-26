@@ -1,0 +1,302 @@
+.user-row {
+    margin-bottom: 14px;
+}
+
+.user-row:last-child {
+    margin-bottom: 0;
+}
+
+.dropdown-user {
+    margin: 13px 0;
+    padding: 5px;
+    height: 100%;
+}
+
+.dropdown-user:hover {
+    cursor: pointer;
+}
+
+.table-user-information>tbody>tr {
+    border-top: 1px solid rgb(221, 221, 221);
+}
+
+.table-user-information>tbody>tr:first-child {
+    border-top: 0;
+}
+
+
+.table-user-information>tbody>tr>td {
+    border-top: 0;
+}
+
+.toppad {
+    margin-top: 20px;
+}
+
+.h3 {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-weight: bold;
+}
+
+.product-page {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.split {
+    background: linear-gradient(to right, #322929 50%, #D9D9D9 50%);
+}
+
+.imageAlignment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+}
+
+.productDesc {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    text-align: center;
+    color: black;
+}
+
+.outerBorderW {
+    border: 1px solid #D9D9D9;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.product-image {
+    position: relative;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.pricetag {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: #F2C744;
+    padding-top: 3px;
+    padding-right: 5px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    color: black;
+    border-radius: 0px 5px 0px 5px;
+}
+
+.pricetag span {
+    font-weight: lighter;
+    font-style: italic;
+    text-decoration: line-through;
+}
+
+.reviews {
+    background-color: #e0e0e0;
+    color: black;
+    padding-bottom: 200px;
+}
+
+.review {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.product-box {
+    transition: transform 0.3s;
+}
+
+#productBox.product-box:hover {
+    transform: scale(1.1);
+    background-color: #393030;
+}
+
+.productText {
+    color: white;
+    font-size: 15px;
+    text-align: center;
+}
+
+#slideshowContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#slideshow {
+    position: relative;
+    width: 75%;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+#slideshow img {
+    width: 100%;
+    height: 100%;
+    transition: transform 0.2s ease-in-out;
+    object-fit: cover;
+    object-position: center;
+    border-left: 5px solid yellow;
+    border-bottom: 5px solid yellow;
+}
+
+.noReviews {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.reviewsHeader {
+    color: black;
+}
+
+@media screen and (max-width: 600px) {
+    /* This will apply when the screen width is 600px or less */
+    #slideshow img {
+        height: auto; /* Allow the height to scale down on smaller screens */
+    }
+    .noReviews {
+        position: absolute;
+        right: 187px;
+        display: flex;
+        flex-direction: column;
+        align-items: left; 
+        justify-content: center;
+        margin-top: 2px;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .reviews {
+        background-color: #D9D9D9;
+        color: black;
+        padding-bottom: 200px;
+    }
+
+    .review {
+        position: absolute;
+        right: 187px;
+        display: flex;
+        flex-direction: column;
+        align-items: left; 
+        justify-content: center;
+        margin-top: 2px;
+        margin-bottom: 20px;
+        padding: 20px;
+        border-radius: 5px;
+    }
+}
+/*
+.yellowBorder {
+    border-left: 5px solid yellow;
+    border-bottom: 5px solid yellow;
+}
+*/
+
+#slideshowAndButtons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#slideshow img:hover {
+    transform: scale(1.05);
+}
+
+#imageButtons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; /* Adjust this value as needed */
+}
+
+#slideshowWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* This will center the slideshow */
+}
+
+.imageButton {
+    width: 90px;
+    height: 15px;
+    margin: 0 5px;
+    border-radius: 25px;
+    background-color: #727272;
+}
+
+.imageButton.active {
+    background-color: #f2c744;
+    width: 110px;
+}
+
+/* Add this media query for smaller screens */
+@media screen and (max-width: 600px) {
+    #imageButtons {
+        margin-top: -200px; /* Adjust this value as needed */
+    }
+
+    .imageButton {
+        width: 50px; /* Adjust this value as needed */
+    }
+
+    .imageButton.active {
+        width: 60px; /* Adjust this value as needed */
+    }
+}
+
+#prevButton,
+#nextButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    /* Make the button background transparent */
+    border: none;
+    /* Remove the border */
+    outline: none;
+    /* Remove the focus outline */
+    padding: 5px;
+    cursor: pointer;
+    font-size: 100px;
+    color: white;
+}
+
+#prevButton {
+    left: 10px;
+}
+
+#nextButton {
+    right: 10px;
+}
+
+.navbar {
+    box-shadow: 0px 0px 15px 0px #0000008b;
+    background-color: #00ffa6;
+    /* No work */
+}
+
+.sliderContainer {
+    max-height: fit-content;
+}
