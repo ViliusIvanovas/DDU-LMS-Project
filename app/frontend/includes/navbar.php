@@ -18,7 +18,7 @@
     width: 80px;
   }
 
-  .sidebar.collapsed .sidebar-item {
+  .sidebar.collapsed .sidebar-item  {
     display: none;
   }
 
@@ -44,7 +44,6 @@
   .content {
     flex-grow: 1;
     transition: margin-left 0.3s;
-    border-left: 2px solid gray;
     margin-left: 320px;
   }
 
@@ -63,13 +62,23 @@
 <div class="d-flex">
     <div id="sidebar" class="bg-dark sidebar">
       <div>
-        <div class="p-3">
+        <div class="flex-shrink-0 p-3">
           <ul class="mt-3 list-unstyled">
             <li class="mb-2">
               <a href="#" class="text-white text-decoration-none">
                 <i class="bi bi-house"></i>
                 <span class="sidebar-item">Home</span>
               </a>
+            </li>
+            <li class="mb-2">
+              <a href="#submenu1" data-bs-toggle="collapse" class="text-white text-decoration-none">
+                <i class="bi bi-folder2-open"></i>
+                <span class="sidebar-item">Expandable Item</span>
+              </a>
+              <ul id="submenu1" class="list-unstyled collapse">
+                <li><a href="#" class="text-white text-decoration-none">Sub Item 1</a></li>
+                <li><a href="#" class="text-white text-decoration-none">Sub Item 2</a></li>
+              </ul>
             </li>
             <!-- More items here -->
           </ul>
@@ -124,10 +133,9 @@
         <button id="collapseButton" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></button>
       </div>
     </div>
-    <div class="flex-grow-1 bg-light content">
+    <div class="flex-grow-1 content">
       <!-- Main content here -->
-    </div>
-  </div>
+    
 
   <script>
     document.getElementById('collapseButton').addEventListener('click', function() {
@@ -135,4 +143,3 @@
     });
   </script>
   <script src="/app/frontend/assets/js/color-modes.js"></script>
-</body>

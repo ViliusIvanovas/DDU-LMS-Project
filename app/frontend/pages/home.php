@@ -1,126 +1,22 @@
-<?php
-$products = Database::getInstance()->query("SELECT * FROM products WHERE Category = 'shoe'")->results();
-$productImages = array();
-$productIds = array(); // New array for product IDs
-
-if ($products) {
-  foreach ($products as $product) {
-    $product = get_object_vars($product);
-    $productNames = $product['name']; // Change 'product_name' to 'name'
-    $images = Product::getImagesByProductId($product['product_id']);
-    if (!empty($images->results())) {
-      $randomImage = $images->results()[array_rand($images->results())];
-      $productImages[] = $randomImage->image_location;
-      $productIds[] = $product['product_id']; // Store the product ID
-    }
-  }
-}
-?>
-
-<script>
-  productIds = <?php echo json_encode($productIds); ?>;
-</script>
-
-<div id="container">
-  <div id="slideshowContainer" class="slider">
-    <div id="slideshowAndButtons">
-      <div id="slideshowWrapper">
-        <div id="slideshow">
-          <a id="slideshowLink" href="#">
-            <div style="display: flex; align-items: center; justify-content: flex-end; position: relative;">
-              <img id="slideshowImage" src="<?php echo isset($productImages[0]) ? $productImages[0] : ''; ?>" alt="Slideshow Image">
-              <div id="productName"></div>
-              <div class="shoe-name" style="color: #fff; text-align: right; position: absolute; top: 50%; transform: translateY(-50%); margin-right: 10px;"><?php echo isset($products[0]->product_name) ? addslashes($products[0]->product_name) : ''; ?></div>
-            </div>
-          </a>
-          <div class="menu-bar" style="display: flex; justify-content: space-between; margin-top: 10px;">
-            <?php
-            foreach ($products as $index => $product) {
-              echo '<div class="shoe-bar" data-index="' . $index . '" style="flex: 1; height: 5px; background-color: transparent; border: 2px solid transparent; border-radius: 10px; margin: 0 5px; transition: background-color 0.3s;"></div>';
-            }
-            ?>
-          </div>
-        </div>
-        <button id="prevButton" style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 20px; color: #fff; cursor: pointer; left: 10px; z-index: 1000;">‹</button>
-        <button id="nextButton" style="position: absolute; top: 50%; transform: translateY(-50%); font-size: 20px; color: #fff; cursor: pointer; right: 10px; z-index: 1000;">›</button>
-      </div>
-      <div id="imageButtons">
-        <?php foreach ($productImages as $index => $image) : ?>
-          <button class="imageButton" data-index="<?php echo $index; ?>"></button>
-        <?php endforeach; ?>
-      </div>
-    </div>
-  </div>
-
-
-<script>
-  let currentImageIndex = 0;
-  productIds = <?php echo json_encode($productIds); ?>;
-  let productNames = <?php echo json_encode($productNames); ?>;
-  const images = <?php echo json_encode($productImages); ?>;
-  const buttons = document.querySelectorAll('.imageButton');
-
-  let slideshowInterval; // Define slideshowInterval
-
-  function startSlideshow() {
-    slideshowInterval = setInterval(changeImage, 3000); // Start the slideshow
-  }
-
-  function stopSlideshow() {
-    clearInterval(slideshowInterval); // Stop the slideshow
-  }
-
-  function updateActiveButton() {
-    buttons.forEach((button, index) => {
-      if (index === currentImageIndex) {
-        button.classList.add('active');
-      } else {
-        button.classList.remove('active');
-      }
-    });
-  }
-
-  function changeImage() {
-    currentImageIndex = (currentImageIndex + 1) % images.length;
-    document.getElementById('slideshowImage').src = images[currentImageIndex];
-    // document.getElementById('productName').textContent = productNames[currentImageIndex]; // Add this line
-    updateActiveButton();
-  }
-
-  buttons.forEach((button, index) => {
-    button.addEventListener('click', () => {
-      currentImageIndex = index;
-      document.getElementById('slideshowImage').src = images[currentImageIndex];
-      updateActiveButton();
-    });
-  });
-
-  document.getElementById('prevButton').addEventListener('click', function() {
-    currentImageIndex = (currentImageIndex - 1 + images.length) % images.length;
-    document.getElementById('slideshowImage').src = images[currentImageIndex];
-    // document.getElementById('productName').textContent = productNames[currentImageIndex]; // Add this line
-    updateActiveButton();
-  });
-
-  document.getElementById('nextButton').addEventListener('click', changeImage);
-
-  setInterval(changeImage, 2000);
-
-  document.getElementById('slideshowContainer').addEventListener('mouseover', function() {
-    clearInterval(slideshowInterval); // Pause the slideshow
-  });
-
-  document.getElementById('slideshowContainer').addEventListener('mouseout', function() {
-    slideshowInterval = setInterval(changeImage, 2000); // Resume the slideshow
-  });
-
-  document.getElementById('slideshowLink').addEventListener('click', function(event) {
-    event.preventDefault();
-    const currentProductId = productIds[currentImageIndex];
-    window.location.href = 'product.php?product_id=' + currentProductId;
-  });
-
-  window.onload = updateActiveButton;
-</script>
+<div class="container">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus posuere tincidunt elit, vitae ullamcorper risus fermentum vitae. Vestibulum quis dolor at augue malesuada venenatis vel in erat. Pellentesque nec lacus consequat, varius ipsum a, semper nisl. Cras porttitor at leo vel mollis. Phasellus turpis nisl, vestibulum at ipsum ut, ornare lacinia mi. Vivamus vitae arcu metus. Suspendisse potenti. Nullam nibh neque, bibendum eu dui quis, hendrerit lacinia neque. Nunc fringilla cursus arcu id interdum. Sed dignissim volutpat faucibus. Etiam a lobortis ligula. In quis nunc quis risus suscipit interdum sed et leo. Nullam commodo et dolor ac fermentum.
+<br>
+Praesent a enim iaculis, consectetur quam in, fringilla augue. Etiam in sem dapibus leo dapibus tempus. Pellentesque consequat augue quis odio elementum, ac lobortis nisi viverra. Suspendisse cursus condimentum urna. Pellentesque sollicitudin erat nibh, id eleifend eros pharetra in. Morbi vel pulvinar tortor, a blandit nisl. Etiam vitae iaculis felis. Integer ac justo gravida, rhoncus enim ultricies, dictum mauris. Sed ullamcorper purus a dui lacinia, non pretium metus tincidunt. Proin ut imperdiet lectus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Fusce felis lacus, venenatis nec ipsum vitae, lobortis suscipit ex. Fusce sodales euismod lacus sit amet rutrum. Sed aliquet luctus lacus, rutrum iaculis justo varius vel. Morbi consectetur est eget diam malesuada tempus. Phasellus faucibus condimentum nunc, vulputate accumsan orci sagittis ut.
+<br>
+Aenean ex eros, vestibulum non feugiat vel, scelerisque sed risus. Aenean felis purus, pulvinar sit amet volutpat vitae, tempus eget felis. Suspendisse potenti. Pellentesque cursus nibh sed leo euismod, nec auctor dui dignissim. Nunc in elit odio. Aenean sit amet est et ante volutpat scelerisque at ut ipsum. Aenean laoreet commodo libero, posuere rutrum elit vehicula et. Nunc quis fermentum metus, et blandit neque. Mauris eget consectetur augue. Curabitur varius arcu eu turpis gravida, et tincidunt massa pretium.
+<br>
+Nullam sit amet placerat metus. Suspendisse elit dui, gravida quis libero sed, lobortis placerat nisi. Pellentesque eleifend, dolor eget congue iaculis, sapien turpis ornare lorem, id porta mauris mauris elementum lacus. Cras dolor nulla, blandit vitae bibendum vitae, tristique et felis. Pellentesque non facilisis velit. Etiam finibus erat vel eros lobortis, sit amet lobortis orci hendrerit. Nam vitae eros scelerisque eros efficitur lobortis. Curabitur fermentum, sapien eu posuere volutpat, orci elit dictum metus, et luctus enim tortor nec tortor. In sit amet tempus nibh, ac blandit urna. Nulla ligula purus, viverra quis aliquam ut, lobortis at nunc.
+<br>
+Cras arcu sem, semper at laoreet non, consequat ac nisi. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vel nunc nibh. Quisque gravida eget justo in convallis. Nullam vitae ligula ex. Donec quam risus, elementum non consectetur et, lacinia at lacus. Aliquam rutrum elit mauris, ut suscipit augue elementum et. Donec condimentum vulputate sem, dignissim interdum libero condimentum et. Vestibulum ut maximus ante. Proin ornare massa in eros tincidunt facilisis. In hac habitasse platea dictumst. Donec porta gravida tortor a bibendum.
+<br>
+Nunc hendrerit elementum velit luctus vestibulum. Donec accumsan sollicitudin finibus. Donec sapien odio, pulvinar sit amet elit quis, elementum rutrum ante. Duis sit amet metus viverra, pretium lectus id, fermentum turpis. Morbi molestie id dui sed lobortis. Nam vulputate lacinia eros, in ultricies ante finibus aliquam. Phasellus et tincidunt velit. Pellentesque metus lectus, vestibulum eu ipsum non, dictum ultrices orci. Donec ac varius leo, vitae suscipit nunc. Vestibulum lacinia tellus at nisl blandit vehicula. Vivamus accumsan turpis et libero tristique, vitae ornare lacus tempus.
+<br>
+Vestibulum vel massa nulla. Pellentesque vel felis est. Maecenas interdum nisl at metus imperdiet laoreet. Nunc lacinia sit amet nisi non faucibus. Ut diam magna, dapibus sit amet libero a, vehicula eleifend risus. Ut eget hendrerit lorem. Aliquam at bibendum leo. Sed eu elementum nibh. Nam at volutpat leo, et suscipit nunc. Praesent risus libero, dignissim feugiat tincidunt vitae, interdum nec ligula. Phasellus eget ultricies nibh.
+<br>
+Mauris nec faucibus tellus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Morbi vel felis id tellus volutpat cursus. Aenean vulputate, dolor sit amet ullamcorper iaculis, mi metus aliquet mi, ut faucibus orci sapien non elit. Morbi pellentesque ipsum arcu, et maximus diam lobortis vel. Aliquam risus felis, placerat quis fermentum vitae, viverra in libero. Sed eu orci a urna laoreet egestas. Nullam placerat pulvinar massa, eu fringilla nisi rhoncus vel.
+<br>
+Nullam mollis lorem eu blandit egestas. Maecenas quis justo vitae dolor sagittis egestas. In hac habitasse platea dictumst. Ut ante turpis, feugiat a commodo vitae, euismod eu ex. Duis luctus interdum turpis, sit amet sodales orci venenatis non. Phasellus accumsan at mi sed consequat. Pellentesque vel lectus consequat est lobortis gravida. In in dolor nisi. Nam varius, urna et ultricies vestibulum, arcu nibh accumsan tellus, sit amet efficitur dolor nunc sagittis enim. Ut tempor eu sapien id eleifend. Integer pretium lacus vel nisi sodales blandit auctor id ex. Nunc bibendum ut nisi ut dapibus.
+<br>
+Pellentesque ac massa ut libero dignissim scelerisque non id nunc. Donec quis risus purus. Quisque at sem et felis eleifend viverra in in dui. Suspendisse tristique sed lectus eu feugiat. Donec vitae tempus sem, at viverra elit. Morbi nunc sem, elementum vel est malesuada, ullamcorper pretium tellus. Donec posuere eget lectus eu hendrerit.
+<br>
 </div>
-</html>
