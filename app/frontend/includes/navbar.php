@@ -1,8 +1,4 @@
 <style>
-  .container {
-    display: flex;
-  }
-
   .sidebar {
     width: 320px;
     transition: width 0.3s;
@@ -44,7 +40,9 @@
   .content {
     flex-grow: 1;
     transition: margin-left 0.3s;
+    position: relative;
     margin-left: 320px;
+    height: 100vh;
   }
 
   .sidebar.collapsed ~ .content {
