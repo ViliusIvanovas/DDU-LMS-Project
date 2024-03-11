@@ -1,0 +1,214 @@
+@startuml
+
+skinparam class {
+    BackgroundColor #F0F8FF
+    BorderColor #2E8B57
+    BorderThickness 3
+    TextColor #2E8B57
+}
+
+class users {
+    + user_id : integer
+    - password : varchar(255)
+    - first_name : text
+    - middle_name : text
+    - last_name : text
+    - profile_picture : integer
+    - address : text
+    - birthdate : timestamp
+    - end_date : timestamp
+    - start_date : timestamp
+    - last_online : timestamp
+    - access_level : integer
+}
+
+class classes {
+    + class_id : integer
+    - name : text
+    - students : integer
+    - end_date : timestamp
+}
+
+class access_level {
+    + access_id : integer
+    - name : text
+}
+
+class rooms {
+    + room_id : integer
+    - name : text
+    - banner : integer
+    - class : integer
+    - teachers : integer
+}
+
+class sections {
+    + section_id : integer
+    - room : integer
+}
+
+class posts {
+    + post_id : integer
+    - section : integer
+    - post_type : integer
+}
+
+class post_types {
+    + post_type_id : integer
+}
+
+class assignments {
+    + assignment_id : integer
+    - due_date : timestamp
+    - group : integer
+}
+
+class time_extentions {
+    + time_extention_id : integer
+    - assignment : integer
+    - new_due_date : timestamp
+    - group : integer
+}
+
+class feedback {
+    + feedback_id : integer
+    - assignment : integer
+    - text : text
+    - grade : text
+    - file : integer
+}
+
+class notes {
+    + note_id : integer
+    - text : text
+}
+
+class bulletin_boards {
+    + bulletin_board_id : integer
+    - group : integer
+    - chat : integer
+}
+
+class files {
+    + file_id : integer
+    - location : text
+    - file_type : integer
+}
+
+class file_types {
+    + file_type_id : integer
+    - text : text
+}
+
+class groups {
+    + group_id : integer
+    - name : text
+    - students : integer
+}
+
+class chats {
+    + chat_id : integer
+    - people : integer
+}
+
+class messages {
+    + message_id : integer
+    - chat : integer
+    - message_reference : integer
+}
+
+class news {
+    + news_id : integer
+    - text : text
+    - poster : integer
+    - post_date : timestamp
+    - file : integer
+}
+
+class time_modules {
+    + time_module_id : integer
+    - class : integer
+    - people : integer
+    - start_time : timestamp
+    - end_time : timestamp
+}
+
+class time_module_notes {
+    + time_module_note_id : integer
+    - text : text
+    - time_module : integer
+    - file : integer
+}
+
+class absence {
+    + absence_id : integer
+    - absence_type : integer
+    - time_module : integer
+    - person : integer
+}
+
+class absence_type {
+    + absence_type_id : integer
+    - text : text
+}
+
+class grades {
+    + grade_id : integer
+    - grade : integer
+    - class : integer
+    - text : text
+    - student : integer
+    - release_time : timestamp
+}
+
+class deceased {
+    + deceased_id : integer
+    - person : integer
+}
+
+class exam_period {
+    + exam_period_id : integer
+    - class : integer
+    - start_time : timestamp
+    - end_time : timestamp
+}
+
+users ||--o{ files #87CEEB : profile_picture
+users }|--|| access_level #87CEEB
+classes ||--o{ users #87CEEB : students and teachers
+rooms ||--o{ files #90EE90 : banner image
+rooms ||--o{ classes #90EE90
+rooms ||--o{ users #90EE90 : teachers
+sections ||--o{ rooms #90EE90
+posts ||--o{ sections #FFB6C1
+posts }|--|| post_types #FFB6C1
+assignments ||--o{ groups #FFA07A : only admins and teachers
+time_extentions ||--o{ assignments #FFA07A
+time_extentions ||--o{ groups #FFA07A
+feedback ||--o{ assignments #FFA07A
+feedback ||--o{ files #FFA07A
+post_types }|--|| notes #FFB6C1
+bulletin_boards ||--o{ groups #FFDAB9
+bulletin_boards }|--|| chats #FFDAB9
+post_types }|--|| files #FFB6C1
+files ||--o{ file_types #FFB6C1
+post_types }|--|| groups #FFB6C1
+groups ||--o{ users #FFDAB9 : students
+chats ||--o{ users #FFB6C1 : people
+messages ||--o{ chats #FFB6C1
+messages }|--|| messages #FFB6C1 : message_reference
+news ||--o{ users #FFDAB9 : only teachers
+news ||--o{ files #FFDAB9
+time_modules ||--o{ users #90EE90 : people
+time_modules ||--o{ classes #90EE90
+time_module_notes ||--o{ time_modules #90EE90
+time_module_notes ||--o{ files #90EE90
+absence ||--o{ users #FFA07A : person
+absence ||--o{ time_modules #FFA07A
+absence ||--o{ absence_type #FFA07A
+grades ||--o{ classes #FFDAB9
+grades ||--o{ users #FFDAB9 : student
+deceased ||--o{ users #FFDAB9 : person
+exam_period ||--o{ classes #87CEEB
+
+@enduml
