@@ -99,21 +99,6 @@ class User
         return false;
     }
 
-    public function hasPermission($key)
-    {
-        $group = $this->_db->get('groups', array('group_id', '=', $this->data()->groups));
-
-        if ($group->count()) {
-            $permissions = json_decode($group->first()->permissions, true);
-
-            if ($permissions[$key] == true) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function exists()
     {
         return (!empty($this->_data)) ? true : false;
@@ -139,25 +124,22 @@ class User
 
     public function isAdmin()
     {
-        if ($this->isLoggedIn()) {
-            $userData = $this->data();
-            if (property_exists($userData, 'is_admin') && $userData->is_admin == 1) {
-                return true;
-            }
-        }
-
-        return false;
+        // rebuild this method
     }
 
-    public function deleteMe()
+    public function isDeceased()
     {
-        if ($this->isLoggedIn()) {
-            $id = $this->data()->user_id;
-        }
+        // rebuild this method
+    }
 
-        if (!$this->_db->delete('users', array('user_id', '=', $id))) {
-            throw new Exception('Unable to update the user.');
-        }
+    public function inExamPeriod()
+    {
+        // rebuild this method
+    }
+
+    public function getClasses()
+    {
+        // rebuild this method
     }
 
     public static function getAllUsers()
@@ -173,137 +155,25 @@ class User
         return $user->first();
     }
 
-    public static function getUserByMail($email)
+    public static function getGrades($user_id)
     {
-        $user = Database::getInstance()->get('users', array('email', '=', $email));
-        return $user->first();
+        $grades = Database::getInstance()->query("SELECT * FROM grades WHERE user_id = $user_id ORDER BY grade_id ASC");
+        //return list of grades
+        return $grades;
     }
 
-    public static function switchAdminState($user_id)
+    public static function getAbsenceStatistics($user_id)
     {
-        $user = Database::getInstance()->get('users', array('user_id', '=', $user_id));
-        $user = $user->first();
-
-        $is_admin = $user->is_admin;
-        if ($is_admin == 1) {
-            $is_admin = 0;
-        } else {
-            $is_admin = 1;
-        }
-
-        $db = Database::getInstance();
-        if (!$db->update('users', 'user_id', $user_id, array('is_admin' => $is_admin))) {
-            throw new Exception('There was a problem updating the user.');
-        }
+        $absences = Database::getInstance()->query("SELECT * FROM absences WHERE user_id = $user_id ORDER BY absence_id ASC");
+        //return list of absences
+        return $absences;
     }
 
-    public static function checkVerificationByUsername($username)
+    public static function getAbsenceStatisticsInTimeFrame($user_id, $start_date, $end_date)
     {
-        try {
-            $db = Database::getInstance();
-            $user = $db->get('users', array('username', '=', $username))->first();
-            $user_id = $user->user_id;
-            $verification = $db->get('verifications', array('user_id', '=', $user_id))->first();
-            if ($verification) {
-                return false;
-            } else {
-                return true;
-            }
-        } catch (Exception $e) {
-            // Handle the exception
-            error_log($e->getMessage());
-            return false; // or throw the exception again depending on your needs
-        }
-    }
-
-    public static function getVerificationCode($user_id)
-    {
-        $db = Database::getInstance();
-        $verification = $db->get('verifications', array('user_id', '=', $user_id))->first();
-        return $verification->verification_code;
-    }
-
-    public static function makeVerified($user_id)
-    {
-        $db = Database::getInstance();
-        if (!$db->delete('verifications', array('user_id', '=', $user_id))) {
-            throw new Exception('There was a problem deleting the verification entry.');
-        }
-    }
-
-    public static function getUserIdByUsername($username)
-    {
-        $db = Database::getInstance();
-        $user = $db->get('users', array('username', '=', $username))->first();
-        return $user->user_id;
-    }
-
-    public static function createVerificationCode($user_id)
-    {
-        $db = Database::getInstance();
-
-        $verification_code = random_int(100000, 999999);
-
-        if (!$db->insert('verifications', array('user_id' => $user_id, 'verification_code' => $verification_code))) {
-            throw new Exception('There was a problem creating the verification code.');
-        }
-    }
-
-    public static function checkVerification($user_id, $verification_code)
-    {
-        $db = Database::getInstance();
-
-        $verification = $db->get('verifications', array('user_id', '=', $user_id))->first();
-
-        if ($verification_code == $verification->verification_code) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static function makeUnverified($user_id)
-    {
-        $db = Database::getInstance();
-
-        $verification_code = random_int(100000, 999999);
-
-        if (!$db->update('verifications', 'user_id', $user_id, array('verification_code' => $verification_code))) {
-            throw new Exception('There was a problem updating the verification code.');
-        }
-    }
-
-    public static function delete($user_id)
-    {
-        if (!$user_id && $user_id != 0) {
-            throw new Exception('Missing user ID');
-        }
-
-        $db = Database::getInstance();
-
-        // Disable foreign key checks
-        $db->query("SET FOREIGN_KEY_CHECKS=0");
-
-        if (!$db->delete('users', array('user_id', '=', $user_id))) {
-            throw new Exception('There was a problem deleting the user.');
-        }
-
-        $db->delete('reviews', array('user_id', '=', $user_id));
-        $db->delete('orders', array('user_id', '=', $user_id));
-        $db->delete('users_sessions', array('user_id', '=', $user_id));
-
-        // Enable foreign key checks
-        $db->query("SET FOREIGN_KEY_CHECKS=1");
-    }
-
-    public static function isVerified($user_id)
-    {
-        $db = Database::getInstance();
-        $verification = $db->get('verifications', array('user_id', '=', $user_id))->first();
-        if ($verification) {
-            return false;
-        } else {
-            return true;
-        }
+        $absences = Database::getInstance()->query("SELECT * FROM absences WHERE user_id = $user_id AND date >= '$start_date' AND date <= '$end_date' ORDER BY absence_id ASC");
+        //return list of absences
+        return $absences;
     }
 }
+?>

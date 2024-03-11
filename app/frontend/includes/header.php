@@ -20,22 +20,10 @@
     $pageName = str_replace(array('-', '_'), ' ', $pageName);
     $pageName = ucwords($pageName);
 
-    // Check if the current page is the index page
-    if ($pageName == 'Index') {
-      $pageName = 'Home';
-    }
-
-    // Check if the current page is a product page
-    if ($pageName == 'Product') {
-      $product_id = $_GET['product_id'];
-      $product = Product::getProductById($product_id);
-      $pageName = $product->name;
-    }
-
     echo $pageName;
     ?>
   </title>
 
-  <link rel="icon" href="/app/frontend/assets/img/Buckled_shoes-logos_white(1) 2.png">
+  <link rel="icon" href="/app/frontend/assets/img/StudX_logo.webp">
 
 </head>
