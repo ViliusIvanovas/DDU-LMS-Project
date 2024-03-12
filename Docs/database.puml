@@ -27,6 +27,7 @@ class classes {
     - name : text
     - students : integer
     - end_date : timestamp
+    - teachers : integer
 }
 
 class access_level {
@@ -39,7 +40,6 @@ class rooms {
     - name : text
     - banner : integer
     - class : integer
-    - teachers : integer
 }
 
 class sections {
@@ -178,7 +178,6 @@ users }|--|| access_level #87CEEB
 classes ||--o{ users #87CEEB : students and teachers
 rooms ||--o{ files #90EE90 : banner image
 rooms ||--o{ classes #90EE90
-rooms ||--o{ users #90EE90 : teachers
 sections ||--o{ rooms #90EE90
 posts ||--o{ sections #FFB6C1
 posts }|--|| post_types #FFB6C1

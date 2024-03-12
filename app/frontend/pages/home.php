@@ -80,4 +80,5 @@
     <br>
     <br>
     <button id="toggleButton" class="ActionPageButton">Toggle Action Page</button>
+    <a href="setup-post.php">Upload post</a>
 </div>

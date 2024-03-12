@@ -30,5 +30,36 @@ class Files
             throw new Exception("Unable to delete the file.");
         }
     }
+
+    public static function getFileTypeId($fileType)
+    {
+        $fileTypeId = '';
+
+        // call the database to get the different file types, these lay in file_types and have file_type_id, text, file_extension
+        $filetypes = Files::getAllFileTypes();
+        foreach ($filetypes as $filetype) {
+            echo $filetype->file_extension;
+            if ($fileType == $filetype->file_extension) {
+                $fileTypeId = $filetype->file_type_id;
+                break; // exit the loop once the file type is found
+            }
+        }
+    
+        return $fileTypeId;
+    }
+
+    public static function getFileTypeById($fileTypeId)
+    {
+        $fileType = Database::getInstance()->get('file_types', array('file_type_id', '=', $fileTypeId));
+        if ($fileType->count()) {
+            return $fileType->first();
+        }
+    }
+
+    public static function getAllFileTypes()
+    {
+        $fileTypes = Database::getInstance()->get('file_types', array('file_type_id', '>', '0'));
+        //return list of file types
+        return $fileTypes;
+    }
 }
-?>
