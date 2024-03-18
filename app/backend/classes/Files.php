@@ -2,26 +2,22 @@
 
 class Files
 {
-    public static function create($fields = array())
+    public static function create($data)
     {
-        if (!Database::getInstance()->insert('files', $fields)) {
-            throw new Exception("Unable to create the file.");
-        }
-    }
+        // Check if the file_type exists in the file_types table
+        $fileTypeId = self::getFileTypeByFileTypeId($data['file_type']);
 
-    public static function getAllFiles()
-    {
-        $files = Database::getInstance()->get('files', array('file_id', '>', '0'));
-        //return list of files
-        return $files;
-    }
+        // Replace the file_type with the file_type_id in the data array
+        $data['file_type'] = $fileTypeId;
 
-    public static function getFileById($file_id)
-    {
-        $file = Database::getInstance()->get('files', array('file_id', '=', $file_id));
-        if ($file->count()) {
-            return $file->first();
-        }
+        // Get the instance of the Database class
+        $database = Database::getInstance();
+
+        // Insert the record into the files table and get the last inserted ID
+        $lastInsertedId = $database->insert('files', $data);
+
+        // Return the ID of the last inserted row
+        return $lastInsertedId;
     }
 
     public static function deleteFile($file_id)
@@ -31,35 +27,46 @@ class Files
         }
     }
 
-    public static function getFileTypeId($fileType)
+    public static function getFileTypeByFileTypeId($extension)
     {
-        $fileTypeId = '';
-
-        // call the database to get the different file types, these lay in file_types and have file_type_id, text, file_extension
-        $filetypes = Files::getAllFileTypes();
-        foreach ($filetypes as $filetype) {
-            echo $filetype->file_extension;
-            if ($fileType == $filetype->file_extension) {
-                $fileTypeId = $filetype->file_type_id;
-                break; // exit the loop once the file type is found
+        $fileTypes = self::getAllFileTypes();
+        foreach ($fileTypes as $fileType) {
+            $extensions = explode(',', $fileType->extension);
+            if (in_array($extension, $extensions)) {
+                return $fileType->file_type_id;
             }
         }
-    
-        return $fileTypeId;
+
+        // If file type not found for the given extension, return the ID of the "other" file type
+        foreach ($fileTypes as $fileType) {
+            if ($fileType->extension == 'other') {
+                return $fileType->file_type_id;
+            }
+        }
+
+        throw new Exception("File type not found for extension: $extension");
     }
 
-    public static function getFileTypeById($fileTypeId)
+    public static function getFileTypeIdByFileId($fileId)
     {
-        $fileType = Database::getInstance()->get('file_types', array('file_type_id', '=', $fileTypeId));
-        if ($fileType->count()) {
-            return $fileType->first();
+        $file = self::getFileById($fileId);
+        if ($file) {
+            return $file->file_type_id;
         }
+        throw new Exception("File not found for file ID: $fileId");
+    }
+
+    public static function getAllFiles()
+    {
+        $files = Database::getInstance()->get('files', array('file_id', '>', '0'));
+        //return list of files
+        return $files->results();
     }
 
     public static function getAllFileTypes()
     {
         $fileTypes = Database::getInstance()->get('file_types', array('file_type_id', '>', '0'));
         //return list of file types
-        return $fileTypes;
+        return $fileTypes->results();
     }
 }
