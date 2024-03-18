@@ -3,10 +3,10 @@
 class User
 {
     private $_db,
-        $_data,
-        $_sessionName,
-        $_cookieName,
-        $_isLoggedIn;
+    $_data,
+    $_sessionName,
+    $_cookieName,
+    $_isLoggedIn;
 
     public function __construct($user = null)
     {
@@ -47,52 +47,29 @@ class User
         }
     }
 
-    public function find($user = null)
+    public function find($email = null)
     {
-        if ($user) {
-            $field = (is_numeric($user)) ? 'user_id' : 'username';
-
-            $data = $this->_db->get('users', array($field, '=', $user));
+        if ($email) {
+            $field = (is_numeric($email)) ? 'user_id' : 'email';
+            $data = $this->_db->get('users', [$field, '=', $email]);
 
             if ($data->count()) {
                 $this->_data = $data->first();
                 return true;
             }
         }
+
+        return false;
     }
 
-    public function login($username = null, $password = null, $remember = false)
+    public function login($email = null, $password = null)
     {
-        if (!$username && !$password && $this->exists()) {
-            Session::put($this->_sessionName, $this->data()->user_id);
-        } else {
-            $user = $this->find($username);
+        $user = $this->find($email);
 
-            if ($user) {
-                if (Password::check($password, $this->data()->password)) {
-                    Session::put($this->_sessionName, $this->data()->user_id);
-
-                    if ($remember) {
-                        $hash = Hash::unique();
-                        $hashCheck = $this->_db->get('users_sessions', array('user_id', '=', $this->data()->user_id));
-
-                        if (!$hashCheck->count()) {
-                            $this->_db->insert(
-                                'users_sessions',
-                                array(
-                                    'user_id' => $this->data()->user_id,
-                                    'hash' => $hash
-                                )
-                            );
-                        } else {
-                            $hash = $hashCheck->first()->hash;
-                        }
-
-                        Cookie::put($this->_cookieName, $hash, Config::get('remember/cookie_expiry'));
-                    }
-
-                    return true;
-                }
+        if ($user) {
+            if (Password::check($password, $this->data()->password)) {
+                Session::put($this->_sessionName, $this->data()->user_id);
+                return true;
             }
         }
 
@@ -101,7 +78,7 @@ class User
 
     public function exists()
     {
-        return (!empty($this->_data)) ? true : false;
+        return (!empty ($this->_data)) ? true : false;
     }
 
     public function logout()

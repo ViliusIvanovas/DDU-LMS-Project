@@ -1,6 +1,5 @@
 <style>
   .footer {
-    background-color: #f2f2f2;
     padding: 10px;
     width: 100%;
   }
@@ -9,7 +8,6 @@
   }
   .footer a {
     text-decoration: none;
-    color: black;
   }
   .footer a:hover {
     text-decoration: underline;
@@ -18,11 +16,8 @@
 
 <br>
 
-<div id="footer" class="jumbotron text-center container footer" style="margin-bottom:0">
-  <?php if ($user->isAdmin()) {
-    echo '<h6><a href="management-hub.php">Management Hub</a></h6>';
-  } ?>
-  <h6><a href="site-policies.php">Site Policies</a></h6>
+<div id="footer" class="jumbotron text-center footer bg-body-tertiary" style="margin-bottom:0">
+  <h6><a href="site-policies.php" class="text-body">Site Policies</a></h6>
   <h6>© 2023. UWU games (I/S)</h6>
 </div>
 
