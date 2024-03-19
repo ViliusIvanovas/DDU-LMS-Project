@@ -47,6 +47,15 @@ class Files
         throw new Exception("File type not found for extension: $extension");
     }
 
+    public static function getFileById($fileId)
+    {
+        $file = Database::getInstance()->get('files', array('file_id', '=', $fileId));
+        if ($file->count()) {
+            return $file->first();
+        }
+        throw new Exception("File not found for file ID: $fileId");
+    }
+
     public static function getFileTypeIdByFileId($fileId)
     {
         $file = self::getFileById($fileId);
