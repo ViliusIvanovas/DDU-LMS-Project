@@ -1,10 +1,12 @@
 <?php
 session_start();
-/*
-if (!isset($_SESSION['user_id']) && basename($_SERVER['PHP_SELF']) != 'login.php') {
-    header('Location: /login.php');
-    exit;
-}*/
+
+// check if user is logged in if the current site, isn't the login page
+if (!isset($_SESSION['user']) && basename($_SERVER['PHP_SELF']) != 'login.php') {
+  header('Location: login.php');
+  exit();
+}
+
 ?>
 
 <!DOCTYPE html>

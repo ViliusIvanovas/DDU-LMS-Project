@@ -68,4 +68,44 @@ class Classes
         // Return the classes
         return $classes;
     }
+
+    public static function getAllStudents($classId)
+    {
+        // Get the instance of the Database class
+        $database = Database::getInstance();
+
+        // Get student IDs from class_students table
+        $sql = "SELECT student_id FROM class_students WHERE class_id = ?";
+        $studentIds = $database->query($sql, [$classId])->results();
+
+        // Get student details
+        $students = [];
+        foreach ($studentIds as $studentId) {
+            $sql = "SELECT * FROM users WHERE user_id = ?";
+            $students[] = $database->query($sql, [$studentId->student_id])->first();
+        }
+
+        // Return the students
+        return $students;
+    }
+
+    public static function getAllTeachers($classId)
+    {
+        // Get the instance of the Database class
+        $database = Database::getInstance();
+
+        // Get teacher IDs from class_teachers table
+        $sql = "SELECT teacher_id FROM class_teachers WHERE class_id = ?";
+        $teacherIds = $database->query($sql, [$classId])->results();
+
+        // Get teacher details
+        $teachers = [];
+        foreach ($teacherIds as $teacherId) {
+            $sql = "SELECT * FROM users WHERE user_id = ?";
+            $teachers[] = $database->query($sql, [$teacherId->teacher_id])->first();
+        }
+
+        // Return the teachers
+        return $teachers;
+    }
 }
