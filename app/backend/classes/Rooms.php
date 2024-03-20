@@ -9,13 +9,6 @@ class Rooms
         }
     }
 
-    public static function getAllFiles()
-    {
-        $files = Database::getInstance()->get('files', array('file_id', '>', '0'));
-        //return list of files
-        return $files;
-    }
-
     public static function getSectionById($section_id)
     {
         $section = Database::getInstance()->get('sections', array('section_id', '=', $section_id));
@@ -24,12 +17,37 @@ class Rooms
         }
     }
 
-    public static function deleteFile($file_id)
+    public static function getAllRoomsByUserId($user_id)
     {
-        if (!Database::getInstance()->delete('files', array('file_id', '=', $file_id))) {
-            throw new Exception("Unable to delete the file.");
+        $classes = Classes::getAllClassesByUserId($user_id);
+
+        $rooms = array();
+
+        // check "rooms" table for where class_id is in $classes
+        foreach ($classes as $class) {
+            $room = Database::getInstance()->get('rooms', array('class_id', '=', $class->class_id));
+            if ($room->count()) {
+                // Add each room object to the rooms array
+                $rooms[] = $room->first();
+            }
+        }
+
+        return $rooms;
+    }
+
+    public static function getRoomById($room_id)
+    {
+        $room = Database::getInstance()->get('rooms', array('room_id', '=', $room_id));
+        if ($room->count()) {
+            return $room->first();
+        }
+    }
+
+    public static function getAllSectionsByRoomId($room_id)
+    {
+        $sections = Database::getInstance()->get('sections', array('room_id', '=', $room_id));
+        if ($sections->count()) {
+            return $sections->results();
         }
     }
 }
-?>
-
