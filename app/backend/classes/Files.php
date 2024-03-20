@@ -56,6 +56,19 @@ class Files
         throw new Exception("File not found for file ID: $fileId");
     }
 
+    public static function getFilePathById($fileId)
+    {
+        // the file can be found in uploads/ directory, and it has the name of the id of the file. The extension for the file, will be the same as in it's name
+        $file = self::getFileById($fileId);
+
+        // get the extension of the file by it's name
+        $extension = explode('.', $file->name);
+        $extension = end($extension);
+
+        // return the absolute path to the file
+        return '../uploads/' . $fileId . '.' . $extension;
+    }
+
     public static function getFileTypeIdByFileId($fileId)
     {
         $file = self::getFileById($fileId);

@@ -101,8 +101,7 @@
         <!-- Account, theme, and collapse buttons here -->
         <button id="accountButton" class="btn btn-primary"><i class="bi bi-person"></i></button> <!-- Account icon -->
         <div class="dropup">
-          <button class="btn btn-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button"
-            aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+          <button class="btn btn-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
             <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
               <use href="#circle-half"></use>
             </svg>
@@ -110,8 +109,7 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
             <li>
-              <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
-                aria-pressed="false">
+              <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
                 <svg class="bi me-2 opacity-50" width="1em" height="1em">
                   <use href="#sun-fill"></use>
                 </svg>
@@ -122,8 +120,7 @@
               </button>
             </li>
             <li>
-              <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
-                aria-pressed="false">
+              <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
                 <svg class="bi me-2 opacity-50" width="1em" height="1em">
                   <use href="#moon-stars-fill"></use>
                 </svg>
@@ -134,8 +131,7 @@
               </button>
             </li>
             <li>
-              <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto"
-                aria-pressed="true">
+              <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
                 <svg class="bi me-2 opacity-50" width="1em" height="1em">
                   <use href="#circle-half"></use>
                 </svg>
@@ -189,7 +185,7 @@
         }
 
         // Add event listener for the collapse button
-        document.getElementById('collapseButton').addEventListener('click', function () {
+        document.getElementById('collapseButton').addEventListener('click', function() {
           sidebar.classList.toggle('collapsed');
           if (sidebar.classList.contains('collapsed')) {
             setCookie('sidebar', 'collapsed', 7);
@@ -199,8 +195,8 @@
         });
 
         // Add event listener for the theme buttons
-        document.querySelectorAll('[data-bs-theme-value]').forEach(function (button) {
-          button.addEventListener('click', function () {
+        document.querySelectorAll('[data-bs-theme-value]').forEach(function(button) {
+          button.addEventListener('click', function() {
             var theme = this.getAttribute('data-bs-theme-value');
             if (theme === 'light') {
               document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
@@ -208,6 +204,14 @@
             } else if (theme === 'dark') {
               document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
               document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+            } else if (theme === 'auto') {
+              if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+                document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+              } else {
+                document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
+                document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+              }
             }
           });
         });
@@ -222,7 +226,6 @@
             document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
           }
         }
-
       </script>
       <script src="/app/frontend/assets/js/color-modes.js"></script>
 </body>
