@@ -40,10 +40,12 @@
 
     .text-field {
         display: flex;
-        align-items: center;
-        /* Vertically center the text */
+        align-items: flex-start;
         justify-content: flex-start;
-        /* Align the text to the left */
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        padding-left: 15px;
     }
 
     .banner-image {
@@ -78,24 +80,62 @@ $posts = Posts::getAllPostsBySectionId($section_id);
 <div class="container">
     <h2>Posts</h2>
     <div class="row">
-        <?php foreach ($posts as $post) : ?>
-            <div class="col-md-4 section-row">
-                <div class="card bg-body-tertiary mb-3 section">
-                    <div class="row no-gutters">
-                        <div class="col-md-8">
-                            <div class="text-field">
-                                <h5 class="card-title"><?php echo $post->title; ?></h5>
-                                <p><?php echo $post->content; ?></p>
+        <?php foreach ($posts as $post): ?>
+            <?php
+            $type = Posts::getPostType($post->post_id);
+            $specific_post = Posts::getPostByPostId($post->post_id)
+                ?>
+
+            <?php
+            if ($type->name == 'Note') {
+                require 'parsedown-1.7.4/Parsedown.php';
+                ?>
+                <div class="col-md-4 section-row">
+                    <div class="card bg-body-tertiary mb-3 section">
+                        <div class="row no-gutters">
+                            <div class="col-md-8">
+                                <div class="text-field">
+                                    <h5 class="card-title">
+                                        <?php echo $specific_post->title; ?>
+                                    </h5>
+                                    <div>
+                                        <?php
+                                        $Parsedown = new Parsedown();
+                                        echo $Parsedown->text($specific_post->text);
+                                        ?>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <?php if ($post->image_id) : ?>
-                            <div class="col-md-4">
-                                <img src="image.php?id=<?php echo $post->image_id; ?>" class="card-img room-image" alt="">
-                            </div>
-                        <?php endif; ?>
                     </div>
                 </div>
-            </div>
+            <?php }
+            ?>
+
+            <?php
+            if ($type->name == 'Fil') {
+                ?>
+                <div class="col-md-4 section-row">
+                    <div class="card bg-body-tertiary mb-3 section">
+                        <div class="row no-gutters">
+                            <div class="col-md-8">
+                                <div class="text-field">
+                                    <h5 class="card-title">
+                                        <?php echo $specific_post->name; ?>
+                                    </h5>
+                                    <div>
+                                        // set up code here for figuring out what file_type it is and how to display it
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php }
+            ?>
+
+
+
         <?php endforeach; ?>
     </div>
 </div>
