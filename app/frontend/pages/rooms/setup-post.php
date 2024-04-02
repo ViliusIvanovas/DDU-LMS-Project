@@ -38,23 +38,23 @@ $section = Rooms::getSectionById($section_id);
     </style>
 
     <div class="post-type-choice">
-        <a href="setup-file.php" class="choice text-body text-decoration-none">
+        <a href="setup-file.php?section_id=<?php echo $section_id; ?>" class="choice text-body text-decoration-none">
             <h5>Fil</h5>
             <i class="bi bi-file-earmark-text"></i>
         </a>
-        <a href="setup-group.php" class="choice text-body text-decoration-none">
+        <a href="setup-group.php?section_id=<?php echo $section_id; ?>" class="choice text-body text-decoration-none">
             <h5>Grupper</h5>
             <i class="bi bi-people-fill"></i>
         </a>
-        <a href="setup-bulletin-board.php" class="choice text-body text-decoration-none">
+        <a href="setup-bulletin-board.php?section_id=<?php echo $section_id; ?>" class="choice text-body text-decoration-none">
             <h5>Opslagsværk</h5>
             <i class="bi bi-book-half"></i>
         </a>
-        <a href="setup-assignment.php" class="choice text-body text-decoration-none">
+        <a href="setup-assignment.php?section_id=<?php echo $section_id; ?>" class="choice text-body text-decoration-none">
             <h5>Aflevering</h5>
             <i class="bi bi-file-earmark-check"></i>
         </a>
-        <a href="setup-note.php" class="choice text-body text-decoration-none">
+        <a href="setup-note.php?section_id=<?php echo $section_id; ?>" class="choice text-body text-decoration-none">
             <h5>Note/tekst</h5>
             <i class="bi bi-file-earmark-richtext"></i>
         </a>

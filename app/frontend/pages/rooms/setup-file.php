@@ -29,6 +29,8 @@
             Select image to upload:
             <input type="file" name="fileToUpload" id="fileToUpload" onchange="displayFileType(event)">
             <input type="hidden" name="return_page" value="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+            <input type="hidden" name="section_id" value="<?php echo $section_id; ?>">
+            <input type="hidden" name="post_type" value="<?php echo $post_type; ?>">
             <input type="submit" value="Upload Image" name="submit">
         </form>
         <p id="fileTypeDisplay"></p>
