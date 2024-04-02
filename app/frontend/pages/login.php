@@ -1,4 +1,4 @@
-<div class="container" style="padding-top: 1%; padding-bottom: 5%;">
+<div class="login-styling" style="padding-top: 1%; padding-bottom: 5%;">
     <div>
         <h2 style="">Login</h2>
         <form action="" method="post">
