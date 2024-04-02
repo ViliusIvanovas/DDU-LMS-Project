@@ -1,20 +1,17 @@
 <?php
-    // Check if the request method is POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Check if the 'note' and 'title' fields are set
-        if (isset($_POST['note']) && isset($_POST['title'])) {
-            // Get the note content and title
-            $noteContent = $_POST['note'];
-            $noteTitle = $_POST['title'];
+        var_dump($_POST); // Add this line to print the POST data
+        $noteContent = $_POST['note'];
+        $noteTitle = $_POST['title'];
+        $sectionId = $_POST['section_id'];
 
-            // Prepare the data array
+        if (!empty($noteContent)) {
             $data = array(
                 'title' => $noteTitle,
                 'text' => $noteContent,
-                'file_type' => 'note'
+                'section_id' => $sectionId,
             );
 
-            // Use the Files class to create a new note
             try {
                 $lastInsertedId = Files::createNote($data);
                 echo 'Note uploaded successfully. ID: ' . $lastInsertedId;
@@ -22,11 +19,9 @@
                 echo 'Error: ' . $e->getMessage();
             }
         } else {
-            // Send an error response
-            echo 'Error: The note content and title were not provided.';
+            echo 'Error: The note content was not provided.';
         }
     } else {
-        // Send an error response
         echo 'Error: The request method must be POST.';
     }
 ?>

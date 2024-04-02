@@ -20,24 +20,24 @@ class Files
         return $lastInsertedId;
     }
 
-    public static function createNote($data)
+    public static function createNote($noteContent)
     {
         // Get the instance of the Database class
         $database = Database::getInstance();
 
         // Insert the record into the notes table and get the last inserted ID
         $noteData = [
-            'title' => $data['title'],
-            'text' => $data['text'],
+            'title' => 'Default Title', // You'll need to provide a default title
+            'text' => $noteContent,
         ];
         $noteId = $database->insert('notes', $noteData);
 
         // Get the highest sort number in the posts table for the given section_id
-        $highestSortNumber = $database->getHighestSortNumber($data['section_id']);
+        $highestSortNumber = Files::getHighestSortNumber(1); // You'll need to provide a default section ID
 
         // Create a post in the posts table
         $postData = [
-            'section_id' => $data['section_id'],
+            'section_id' => 1, // For notes, section_id will always be 1
             'post_type' => 10, // For notes, post_type will always be 10
             'specific_post_id' => $noteId,
             'sort' => $highestSortNumber + 1,
@@ -48,20 +48,39 @@ class Files
         return $noteId;
     }
 
-    public static function getHighestSortNumber($sectionId)
+    public static function createFile($fileContent, $fileType)
     {
-        // Get the instance of the Database class
         $database = Database::getInstance();
 
-        // Prepare the SQL query and the parameters
-        $query = "SELECT MAX(sort) as maxSort FROM posts WHERE section_id = :section_id";
-        $params = ['section_id' => $sectionId];
+        // Create a new file in the files table
+        $fileData = [
+            'content' => $fileContent,
+            'type' => $fileType,
+        ];
+        $fileId = $database->insert('files', $fileData);
 
-        // Execute the query and get the result
-        $result = $database->fetch($query, $params);
+        // Get the highest sort number in the posts table for the given section_id
+        $highestSortNumber = Files::getHighestSortNumber(1); // You'll need to provide a default section ID
 
-        // Return the highest sort number
-        return $result['maxSort'];
+        // Create a post in the posts table
+        $postData = [
+            'section_id' => 1, // For files, section_id will always be 1
+            'post_type' => 11, // For files, post_type will always be 11
+            'specific_post_id' => $fileId,
+            'sort' => $highestSortNumber + 1,
+        ];
+        $database->insert('posts', $postData);
+
+        // Return the ID of the created file
+        return $fileId;
+    }
+
+    public static function getHighestSortNumber($sectionId)
+    {
+        $database = Database::getInstance();
+        $database->query("SELECT MAX(sort) AS max_sort FROM posts WHERE section_id = ?", [$sectionId]);
+        $results = $database->results();
+        return $results[0]->max_sort;
     }
 
     public static function deleteFile($file_id)
