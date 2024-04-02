@@ -4,22 +4,29 @@
 <head>
     <title>StackEdit in PHP</title>
     <style>
-        #stackedit-iframe {
+        #stackedit-container {
             width: 100%;
             height: 500px;
             /* Adjust height as per your requirement */
         }
 
-        #note-content {
-            display: none;
+        #stackedit-iframe {
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 
 <body>
-    <iframe id="stackedit-iframe" src="https://stackedit.io/app#" allowfullscreen></iframe>
-    <textarea id="note-content"></textarea>
-    <button id="upload-button">Upload</button>
+    <div id="stackedit-container">
+        <iframe id="stackedit-iframe" src="https://stackedit.io/app#" allowfullscreen></iframe>
+    </div>
+
+    <form id="upload-form" action="upload_note.php" method="post">
+        <input type="hidden" id="note-content" name="note">
+        <input type="hidden" id="note-title" name="title">
+        <button type="submit" id="upload-button">Upload</button>
+    </form>
 
     <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
     <script>
@@ -28,37 +35,26 @@
 
         // Listen to StackEdit events and apply the changes to the textarea.
         stackedit.on('fileChange', (file) => {
+            document.querySelector('#stackedit-container').innerHTML = file.content.html;
             document.querySelector('#note-content').value = file.content.text;
+            document.querySelector('#note-title').value = file.name;
         });
 
-        // Add event listener to the upload button
-        document.querySelector('#upload-button').addEventListener('click', uploadNote);
+        // Add event listener to the form submit event
+        document.querySelector('#upload-form').addEventListener('submit', () => {
+            // Get the note content and title from the StackEdit editor
+            const noteContent = document.querySelector('#stackedit-container').innerHTML;
+            const noteTitle = stackedit.file.name;
 
-        function uploadNote() {
-            // Get the note content from the textarea
-            const noteContent = document.querySelector('#note-content').value;
-
-            // Create a FormData object
-            const formData = new FormData();
-            formData.append('note', noteContent);
-
-            // Send a POST request to your server with the note content
-            fetch('upload_note.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.text())
-                .then(() => {
-                    // Clear the textarea
-                    document.querySelector('#note-content').value = '';
-                })
-                .catch(error => console.error('Error:', error));
-        }
+            // Set the note content and title as the values of the hidden input fields
+            document.querySelector('#note-content').value = noteContent;
+            document.querySelector('#note-title').value = noteTitle;
+        });
 
         // Add event listener to the window unload event
         window.onbeforeunload = function() {
-            // Clear the textarea
-            document.querySelector('#note-content').value = '';
+            // Clear the textarea and title
+            document.querySelector('#stackedit-container').innerHTML = '';
         }
     </script>
 </body>
