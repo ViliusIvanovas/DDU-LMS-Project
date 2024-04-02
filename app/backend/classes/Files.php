@@ -20,6 +20,50 @@ class Files
         return $lastInsertedId;
     }
 
+    public static function createNote($data)
+    {
+        // Get the instance of the Database class
+        $database = Database::getInstance();
+
+        // Insert the record into the notes table and get the last inserted ID
+        $noteData = [
+            'title' => $data['title'],
+            'text' => $data['text'],
+        ];
+        $noteId = $database->insert('notes', $noteData);
+
+        // Get the highest sort number in the posts table for the given section_id
+        $highestSortNumber = $database->getHighestSortNumber($data['section_id']);
+
+        // Create a post in the posts table
+        $postData = [
+            'section_id' => $data['section_id'],
+            'post_type' => 10, // For notes, post_type will always be 10
+            'specific_post_id' => $noteId,
+            'sort' => $highestSortNumber + 1,
+        ];
+        $database->insert('posts', $postData);
+
+        // Return the ID of the created note
+        return $noteId;
+    }
+
+    public static function getHighestSortNumber($sectionId)
+    {
+        // Get the instance of the Database class
+        $database = Database::getInstance();
+
+        // Prepare the SQL query and the parameters
+        $query = "SELECT MAX(sort) as maxSort FROM posts WHERE section_id = :section_id";
+        $params = ['section_id' => $sectionId];
+
+        // Execute the query and get the result
+        $result = $database->fetch($query, $params);
+
+        // Return the highest sort number
+        return $result['maxSort'];
+    }
+
     public static function deleteFile($file_id)
     {
         if (!Database::getInstance()->delete('files', array('file_id', '=', $file_id))) {
@@ -73,7 +117,7 @@ class Files
     {
         $file = self::getFileById($fileId);
         if ($file) {
-            return $file->file_type_id;
+            return $file->file_type;
         }
         throw new Exception("File not found for file ID: $fileId");
     }
@@ -90,5 +134,20 @@ class Files
         $fileTypes = Database::getInstance()->get('file_types', array('file_type_id', '>', '0'));
         //return list of file types
         return $fileTypes->results();
+    }
+
+    public static function isFileImage($fileId)
+    {
+        $fileTypeId = self::getFileTypeIdByFileId($fileId);
+        $fileTypes = self::getAllFileTypes();
+        foreach ($fileTypes as $fileType) {
+            if ($fileType->file_type_id == $fileTypeId) {
+                $extensions = explode(',', $fileType->extension);
+                if (in_array('jpg', $extensions) || in_array('jpeg', $extensions) || in_array('png', $extensions) || in_array('gif', $extensions)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
