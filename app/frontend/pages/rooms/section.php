@@ -67,6 +67,9 @@ $posts = Posts::getAllPostsBySectionId($section_id);
 
 <div class="container">
     <h2>Posts</h2>
+
+    <a href="setup-post.php?section_id=<?php echo $section_id; ?>" class="btn btn-primary">Add Post</a>
+
     <div class="row">
         <?php foreach ($posts as $post) : ?>
             <?php
@@ -134,6 +137,24 @@ $posts = Posts::getAllPostsBySectionId($section_id);
 
 
 
+
         <?php endforeach; ?>
+        <div class="col-md-4 section-row">
+            <div class="card bg-body-tertiary mb-3 section">
+                <div class="row no-gutters">
+                    <div class="col-md-12">
+                        <div class="text-field">
+                            <!-- Add an icon to represent that this is an image -->
+                            <h5 class="card-title">
+                                <i class="bi bi-image-fill"></i> <!-- Bootstrap image icon -->
+                                <?php echo "YouTube Test"; ?>
+                            </h5>
+                            <div class="image-container d-flex align-items-start justify-content-center text-center">
+                                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Zh0JvIjU_Oc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
