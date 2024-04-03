@@ -1,6 +1,5 @@
 <?php
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        var_dump($_POST); // Add this line to print the POST data
         $noteContent = $_POST['note'];
         $noteTitle = $_POST['title'];
         $sectionId = $_POST['section_id'];
@@ -14,7 +13,8 @@
 
             try {
                 $lastInsertedId = Files::createNote($data);
-                echo 'Note uploaded successfully. ID: ' . $lastInsertedId;
+                header("Location: section.php?section_id=$sectionId"); // Redirect to section.php with the section id
+                exit();
             } catch (Exception $e) {
                 echo 'Error: ' . $e->getMessage();
             }

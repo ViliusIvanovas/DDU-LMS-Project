@@ -20,24 +20,24 @@ class Files
         return $lastInsertedId;
     }
 
-    public static function createNote($noteContent)
+    public static function createNote($data)
     {
         // Get the instance of the Database class
         $database = Database::getInstance();
 
         // Insert the record into the notes table and get the last inserted ID
         $noteData = [
-            'title' => 'Default Title', // You'll need to provide a default title
-            'text' => $noteContent,
+            'title' => $data['title'],
+            'text' => $data['text'],
         ];
         $noteId = $database->insert('notes', $noteData);
 
         // Get the highest sort number in the posts table for the given section_id
-        $highestSortNumber = Files::getHighestSortNumber(1); // You'll need to provide a default section ID
+        $highestSortNumber = Files::getHighestSortNumber($data['section_id']);
 
         // Create a post in the posts table
         $postData = [
-            'section_id' => 1, // For notes, section_id will always be 1
+            'section_id' => $data['section_id'],
             'post_type' => 10, // For notes, post_type will always be 10
             'specific_post_id' => $noteId,
             'sort' => $highestSortNumber + 1,

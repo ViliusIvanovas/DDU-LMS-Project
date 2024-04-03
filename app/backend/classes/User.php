@@ -152,5 +152,12 @@ class User
         //return list of absences
         return $absences;
     }
+
+    public static function getFullName($user_id)
+    {
+        $user = Database::getInstance()->get('users', array('user_id', '=', $user_id));
+        $user = $user->first();
+        return $user->first_name . " " . $user->middle_name . " " . $user->last_name;
+    }
 }
 ?>

@@ -79,7 +79,7 @@ $posts = Posts::getAllPostsBySectionId($section_id);
 
             <?php
             if ($type->name == 'Note') {
-                require 'parsedown-1.7.4/Parsedown.php';
+                require_once 'parsedown-1.7.4/Parsedown.php';
             ?>
                 <div class="col-md-4 section-row">
                     <div class="card bg-body-tertiary mb-3 section">
