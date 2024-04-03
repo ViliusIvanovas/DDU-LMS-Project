@@ -78,81 +78,60 @@
 
 
       <script>
-        window.onload = setSidebarBackground;
+        // Function to set the sidebar state in localStorage
+function setSidebarState(state) {
+  localStorage.setItem('sidebarState', state);
+}
 
-        // Function to set a cookie
-        function setCookie(name, value, days) {
-          var expires = "";
-          if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            expires = "; expires=" + date.toUTCString();
-          }
-          document.cookie = name + "=" + (value || "") + expires + "; path=/";
-        }
+// Function to get the sidebar state from localStorage
+function getSidebarState() {
+  return localStorage.getItem('sidebarState');
+}
 
-        // Function to get a cookie
-        function getCookie(name) {
-          var nameEQ = name + "=";
-          var ca = document.cookie.split(';');
-          for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-          }
-          return null;
-        }
+// Function to set the color mode
+function setColorMode(mode) {
+  if (mode === 'light') {
+    document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
+    document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+  } else if (mode === 'dark') {
+    document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+    document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+  }
+}
 
-        // Get the sidebar element
-        var sidebar = document.getElementById('sidebar');
+document.addEventListener('DOMContentLoaded', function() {
+  var savedState = getSidebarState();
 
-        // Check the cookie and set the sidebar state
-        if (getCookie('sidebar') === 'collapsed') {
-          sidebar.classList.add('collapsed');
-        }
+  // Set the sidebar state
+  if (savedState === 'collapsed') {
+    document.getElementById('sidebar').classList.add('collapsed');
+  }
 
-        // Add event listener for the collapse button
-        document.getElementById('collapseButton').addEventListener('click', function() {
-          sidebar.classList.toggle('collapsed');
-          if (sidebar.classList.contains('collapsed')) {
-            setCookie('sidebar', 'collapsed', 7);
-          } else {
-            setCookie('sidebar', '', 7);
-          }
-        });
+  // Set the color mode
+  var preferredColorMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  var savedColorMode = localStorage.getItem('colorMode');
+  setColorMode(savedColorMode || preferredColorMode);
 
-        // Add event listener for the theme buttons
-        document.querySelectorAll('[data-bs-theme-value]').forEach(function(button) {
-          button.addEventListener('click', function() {
-            var theme = this.getAttribute('data-bs-theme-value');
-            if (theme === 'light') {
-              document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
-              document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-            } else if (theme === 'dark') {
-              document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-              document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-            } else if (theme === 'auto') {
-              if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-                document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-              } else {
-                document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
-                document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-              }
-            }
-          });
-        });
+  // Add event listener for the collapse button
+  document.getElementById('collapseButton').addEventListener('click', function() {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('collapsed');
+    var newState = sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded';
+    setSidebarState(newState);
+  });
 
-        function setSidebarBackground() {
-          var theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          if (theme === 'light') {
-            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
-            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-          } else if (theme === 'dark') {
-            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-          }
-        }
+  // Add event listener for the theme buttons
+  document.querySelectorAll('[data-bs-theme-value]').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var theme = this.getAttribute('data-bs-theme-value');
+      setColorMode(theme);
+      localStorage.setItem('colorMode', theme);
+    });
+  });
+
+  // Set sidebar state on initial load
+  setSidebarState(savedState || 'expanded');
+});
+
       </script>
-      <script src="/app/frontend/assets/js/color-modes.js"></script>
 </body>

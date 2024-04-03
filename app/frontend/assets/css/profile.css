@@ -258,9 +258,32 @@ body.dark .background-sidebar {
     background: var(--sidebar-background-dark);
 }
 
+/*login*/
+
 .login-styling {
     background-image: url('https://svgshare.com/i/14wX.svg');
     background-repeat: no-repeat;
     background-size: cover;
     height: 100vh;
+}
+
+.login-body {
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.glass {
+    background: rgba(204, 255, 253, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 0px;
+    width: 50%;
+}
+
+.login-box{
+    padding: 8vh; 
+    padding-left: 9vw; 
+    padding-right: 9vw;
+    box-shadow: #39303044 0px 0px 10px 0px;
 }
