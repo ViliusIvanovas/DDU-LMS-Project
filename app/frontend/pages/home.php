@@ -80,7 +80,9 @@
     <br>
     <br>
     <button id="toggleButton" class="ActionPageButton">Toggle Action Page</button>
-    <a href="setup-post.php">Upload post</a>
     <a href="classes.php">My classes</a>
     <a href="rooms.php">My rooms</a>
+    <a href="schedule.php">My schedule</a>
+    <a href="chat.php">My chats</a>
+    <a href="logout.php">Logout</a>
 </div>
