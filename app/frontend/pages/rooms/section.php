@@ -131,30 +131,35 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                             </div>
                         </div>
                     </div>
-            <?php }
-            }
-            ?>
-
-
-
-
-        <?php endforeach; ?>
-        <div class="col-md-4 section-row">
-            <div class="card bg-body-tertiary mb-3 section">
-                <div class="row no-gutters">
-                    <div class="col-md-12">
-                        <div class="text-field">
-                            <!-- Add an icon to represent that this is an image -->
-                            <h5 class="card-title">
-                                <i class="bi bi-image-fill"></i> <!-- Bootstrap image icon -->
-                                <?php echo "YouTube Test"; ?>
-                            </h5>
-                            <div class="image-container d-flex align-items-start justify-content-center text-center">
-                                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/Zh0JvIjU_Oc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <?php
+                }
+                if (Files::fileHasPDF($specific_post->file_id)) {
+                ?>
+                    <div class="col-md-2 section-row">
+                        <div class="card bg-body-tertiary mb-3 section">
+                            <div class="row no-gutters">
+                                <div class="col-md-12">
+                                    <div class="text-field">
+                                        <h5 class="card-title">
+                                            <i class="bi bi-file-earmark-pdf-fill"></i> <!-- Bootstrap PDF icon -->
+                                            <?php echo $specific_post->name; ?>
+                                        </h5>
+                                        <!-- Add a button to download the PDF and trigger the toggle action -->
+                                        <div class="pdf-download-button">
+                                            <a id="toggleButton">
+                                                <i class="bi bi-arrow-right-circle"></i> <!-- Bootstrap arrow icon -->
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
+                <?php
+                }
+                ?>
+            <?php }
+            ?>
+        <?php endforeach; ?>
     </div>
+</div>

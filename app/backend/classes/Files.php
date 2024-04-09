@@ -169,4 +169,22 @@ class Files
         }
         return false;
     }
+
+    public static function fileHasPDF($fileId)
+    {
+        // check pdf_link table for if the file has a pdf link
+        $pdfLink = Database::getInstance()->get('pdf_link', array('original', '=', $fileId));
+        if ($pdfLink->count()) {
+            return true;
+        }
+    }
+
+    public static function getLinkedPDF($fileId)
+    {
+        // get the pdf link for the file
+        $pdfLink = Database::getInstance()->get('pdf_link', array('original', '=', $fileId));
+        if ($pdfLink->count()) {
+            return $pdfLink->first()->pdf;
+        }
+    }
 }

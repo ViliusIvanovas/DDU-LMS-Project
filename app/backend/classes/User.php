@@ -3,10 +3,10 @@
 class User
 {
     private $_db,
-    $_data,
-    $_sessionName,
-    $_cookieName,
-    $_isLoggedIn;
+        $_data,
+        $_sessionName,
+        $_cookieName,
+        $_isLoggedIn;
 
     public function __construct($user = null)
     {
@@ -40,11 +40,21 @@ class User
         }
     }
 
-    public function create($fields = array())
+    public static function create($data)
     {
-        if (!$this->_db->insert('users', $fields)) {
+        // Get the instance of the Database class
+        $database = Database::getInstance();
+
+        // Insert the record into the users table and get the last inserted ID
+        $lastInsertedId = $database->insert('users', $data);
+
+        // If insertion failed, throw an exception
+        if ($lastInsertedId === false) {
             throw new Exception("Unable to create the user.");
         }
+
+        // Return the ID of the last inserted row
+        return $lastInsertedId;
     }
 
     public function find($email = null)
@@ -78,7 +88,7 @@ class User
 
     public function exists()
     {
-        return (!empty ($this->_data)) ? true : false;
+        return (!empty($this->_data)) ? true : false;
     }
 
     public function logout()
@@ -101,7 +111,24 @@ class User
 
     public function isAdmin()
     {
-        // rebuild this method
+        $al = $this->data()->access_level;
+
+        if ($al == 3) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isTeacher()
+    {
+        $al = $this->data()->access_level;
+
+        if ($al == 2) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function isDeceased()
@@ -160,4 +187,3 @@ class User
         return $user->first_name . " " . $user->middle_name . " " . $user->last_name;
     }
 }
-?>
