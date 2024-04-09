@@ -24,12 +24,12 @@
           </ul>
         </div>
       </div>
-      <div class="sidebar-footer">
-        <!-- Account, theme, and collapse buttons here -->
-        <button id="accountButton" class="btn btn-primary"><i class="bi bi-person"></i></button> <!-- Account icon -->
+      <div class="sidebar-footer d-flex justify-content-evenly flex-wrap">
+        <!-- Account, theme buttons here -->
+        <button id="accountButton" class="btn btn-primary d-flex"><i class="bi bi-person"></i></button> <!-- Account icon -->
         <div class="dropup">
-          <button class="btn btn-primary py-2 dropdown-toggle d-flex align-items-center" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-            <svg class="bi my-1 theme-icon-active" width="1em" height="1em">
+          <button class="btn btn-primary py-2 dropdown-toggle d-flex" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+            <svg class="bi my-1 theme-icon-active" class="emIcon">
               <use href="#circle-half"></use>
             </svg>
             <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
@@ -37,39 +37,34 @@
           <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme-text">
             <li>
               <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-                <svg class="bi me-2 opacity-50" width="1em" height="1em">
-                  <use href="#sun-fill"></use>
-                </svg>
-                Lys tilstand
-                <svg class="bi ms-auto d-none" width="1em" height="1em">
+                <i class="bi bi-brightness-high" class="emIcon"></i>
+                <span class="moreSpacing">Lys tilstand</span>
+                <svg class="bi ms-auto d-none" class="emIcon">
                   <use href="#check2"></use>
                 </svg>
               </button>
             </li>
             <li>
               <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-                <svg class="bi me-2 opacity-50" width="1em" height="1em">
-                  <use href="#moon-stars-fill"></use>
-                </svg>
-                Mørk tilstand
-                <svg class="bi ms-auto d-none" width="1em" height="1em">
+                <i class="bi bi-moon-stars" class="emIcon"></i>
+                <span class="moreSpacing">Mørk tilstand</span>
+                <svg class="bi ms-auto d-none" class="emIcon">
                   <use href="#check2"></use>
                 </svg>
               </button>
             </li>
             <li>
               <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-                <svg class="bi me-2 opacity-50" width="1em" height="1em">
-                  <use href="#circle-half"></use>
-                </svg>
-                Automatisk
-                <svg class="bi ms-auto d-none" width="1em" height="1em">
+                <i class="bi bi-circle-half" class="emIcon"></i>
+                <span class="moreSpacing">Automatisk</span>
+                <svg class="bi ms-auto d-none" class="emIcon">
                   <use href="#check2"></use>
                 </svg>
               </button>
             </li>
           </ul>
         </div>
+        <!-- Popout button here -->
         <button id="collapseButton" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></button>
       </div>
     </div>
@@ -79,59 +74,58 @@
 
       <script>
         // Function to set the sidebar state in localStorage
-function setSidebarState(state) {
-  localStorage.setItem('sidebarState', state);
-}
+        function setSidebarState(state) {
+          localStorage.setItem('sidebarState', state);
+        }
 
-// Function to get the sidebar state from localStorage
-function getSidebarState() {
-  return localStorage.getItem('sidebarState');
-}
+        // Function to get the sidebar state from localStorage
+        function getSidebarState() {
+          return localStorage.getItem('sidebarState');
+        }
 
-// Function to set the color mode
-function setColorMode(mode) {
-  if (mode === 'light') {
-    document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
-    document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-  } else if (mode === 'dark') {
-    document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-    document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-  }
-}
+        // Function to set the color mode
+        function setColorMode(mode) {
+          if (mode === 'light') {
+            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
+            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+          } else if (mode === 'dark') {
+            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+          }
+        }
 
-document.addEventListener('DOMContentLoaded', function() {
-  var savedState = getSidebarState();
+        document.addEventListener('DOMContentLoaded', function() {
+          var savedState = getSidebarState();
 
-  // Set the sidebar state
-  if (savedState === 'collapsed') {
-    document.getElementById('sidebar').classList.add('collapsed');
-  }
+          // Set the sidebar state
+          if (savedState === 'collapsed') {
+            document.getElementById('sidebar').classList.add('collapsed');
+          }
 
-  // Set the color mode
-  var preferredColorMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  var savedColorMode = localStorage.getItem('colorMode');
-  setColorMode(savedColorMode || preferredColorMode);
+          // Set the color mode
+          var preferredColorMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          var savedColorMode = localStorage.getItem('colorMode');
+          setColorMode(savedColorMode || preferredColorMode);
 
-  // Add event listener for the collapse button
-  document.getElementById('collapseButton').addEventListener('click', function() {
-    var sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('collapsed');
-    var newState = sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded';
-    setSidebarState(newState);
-  });
+          // Add event listener for the collapse button
+          document.getElementById('collapseButton').addEventListener('click', function() {
+            var sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            var newState = sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded';
+            setSidebarState(newState);
+          });
 
-  // Add event listener for the theme buttons
-  document.querySelectorAll('[data-bs-theme-value]').forEach(function(button) {
-    button.addEventListener('click', function() {
-      var theme = this.getAttribute('data-bs-theme-value');
-      setColorMode(theme);
-      localStorage.setItem('colorMode', theme);
-    });
-  });
+          // Add event listener for the theme buttons
+          document.querySelectorAll('[data-bs-theme-value]').forEach(function(button) {
+            button.addEventListener('click', function() {
+              var theme = this.getAttribute('data-bs-theme-value');
+              setColorMode(theme);
+              localStorage.setItem('colorMode', theme);
+            });
+          });
 
-  // Set sidebar state on initial load
-  setSidebarState(savedState || 'expanded');
-});
-
+          // Set sidebar state on initial load
+          setSidebarState(savedState || 'collapsed');
+        });
       </script>
 </body>
