@@ -4,64 +4,70 @@
 
     <?php
     $userid = $user->data()->user_id;
-
     $conversations = Chat::getConversationsByUserId($userid);
-
     $message_id = $_GET['message_id'] ?? null;
     ?>
 
     <div class="container my-5">
         <div class="row align-items-center rounded-3 border shadow-lg bg-body-tertiary schedule-box">
-            <div class="col-sm-4 p-4 all-conversations" style="height: 100%;">
+            <div class="col-sm-4 p-4 all-conversations conversation-box">
                 <?php
                 usort($conversations, function ($a, $b) {
                     return strtotime($a->sent_at) < strtotime($b->sent_at);
                 });
+
                 foreach ($conversations as $conversation) {
                     $sender = $conversation->sender;
                     $message = $conversation->message;
                     $date = $conversation->sent_at;
                     $title = $conversation->title;
-
                     $name = User::getFullName($sender);
+                    $recipients = Chat::getRecipientNamesByMessageId($conversation->message_id);
+                    $recipientsString = implode(",", $recipients);
 
-                    echo "<div class='bg-body' style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>";
-                    echo "<h6> $name </h6>";
-                    echo "<h4> $title </h4>";
-                    echo "<p> $message </p>";
-                    echo "<p> $date </p>";
-                    echo "</div>";
+                ?>
+                    <a style="text-decoration: none; color: inherit;" href="chat.php?message_id=<?php echo $conversation->message_id; ?>">
+                        <div class='bg-body' data-recipients='$recipientsString' style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>
+                            <?php
+                            echo "<div class='conversation' data-message-id='{$conversation->message_id}'>";
+                            echo "<h3>$title</h3>";
+                            echo "<p>$message</p>";
+                            echo "<p>Sender: $name</p>";
+                            echo "<p>Date: $date</p>";
+                            echo "</div>";
+                            ?>
+                        </div>
+                    </a>
+                <?php
                 }
                 ?>
+
             </div>
-            <div class="col-sm-8 bg-body specific-conversation" style="height: 100%;">
+            <div class="col-sm-8 bg-body specific-conversation conversation-box">
                 <?php
                 if ($message_id) {
-                    $message = Chat::getMessageById($message_id);
-                    $sender = $message->sender;
-                    $message = $message->message;
-                    $date = $message->sent_at;
-                    $title = $message->title;
-
+                    $chatMessage = Chat::getMessageById($message_id);
+                    $sender = $chatMessage->sender;
+                    $message = $chatMessage->message;
+                    $date = $chatMessage->sent_at;
+                    $title = $chatMessage->title;
                     $name = User::getFullName($sender);
 
-                    echo "<div class='bg-body' style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>";
-                    echo "<h6> $name </h6>";
-                    echo "<h4> $title </h4>";
-                    echo "<p> $message </p>";
-                    echo "<p> $date </p>";
-                    echo "</div>";
-                }
-                else
-                {
+                    echo "<p>" . $name . " - " . $date . "</p>";
+                    echo "<h3>$title</h3>";
+                    echo "<small>" . implode(", ", Chat::getRecipientNamesByMessageId($message_id)) .  "</small> <br> <br>";
+                    echo "<p>$message</p>";
+                    echo "<textarea id='response' placeholder='Skriv dit svar her...'></textarea>";
+                    echo "<button id='send-response'>Send svar</button>";
+                } else {
                     echo "<h2> Vælg en samtale for at se beskeder </h2>";
                 }
                 ?>
-
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- The Modal -->
 <div id="myModal" class="modal">
@@ -210,5 +216,10 @@
 
     .conversation-box {
         height: 500px;
+        overflow: auto;
+    }
+
+    .no-pointer-events {
+        pointer-events: none;
     }
 </style>
