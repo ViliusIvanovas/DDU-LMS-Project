@@ -61,4 +61,33 @@ class Chat
 
         return $recipientNames;
     }
+
+    public static function createResponse($data)
+    {
+        // Get the instance of the Database class
+        $database = Database::getInstance();
+
+        // Insert the record into the responses table
+        $responseData = [
+            'message_id' => $data['message_id'],
+            'message' => $data['message'],
+            'sender' => $data['sender'],
+            'timestamp' => date('Y-m-d H:i:s'), // Current date and time
+        ];
+        $database->insert('message_responses', $responseData);
+    }
+
+    public static function getResponsesByMessageId($message_id)
+    {
+        return Database::getInstance()->get('message_responses', ['message_id', '=', $message_id])->results();
+    }
+
+    public static function createMessage($data)
+    {
+        $database = Database::getInstance();
+
+        $lastInsertedId = $database->insert('messages', $data);
+
+        return $lastInsertedId;
+    }
 }

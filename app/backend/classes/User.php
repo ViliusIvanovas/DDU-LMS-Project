@@ -141,16 +141,10 @@ class User
         // rebuild this method
     }
 
-    public function getClasses()
-    {
-        // rebuild this method
-    }
-
-    public static function getAllUsers()
-    {
-        $users = Database::getInstance()->query("SELECT * FROM users ORDER BY user_id ASC");
-        //return list of users
-        return $users;
+    public static function getAllUsers() {
+        $db = Database::getInstance();
+        $results = $db->query("SELECT * FROM users ORDER BY user_id ASC")->results();
+        return $results;
     }
 
     public static function getUserById($user_id)
@@ -185,5 +179,26 @@ class User
         $user = Database::getInstance()->get('users', array('user_id', '=', $user_id));
         $user = $user->first();
         return $user->first_name . " " . $user->middle_name . " " . $user->last_name;
+    }
+
+    public static function getAllStudents()
+    {
+        $students = Database::getInstance()->query("SELECT * FROM users WHERE access_level = 1 ORDER BY user_id ASC");
+        //return list of students
+        return $students;
+    }
+
+    public static function getAllTeachers()
+    {
+        $teachers = Database::getInstance()->query("SELECT * FROM users WHERE access_level = 2 ORDER BY user_id ASC");
+        //return list of teachers
+        return $teachers;
+    }
+
+    public static function getAllAdmins()
+    {
+        $admins = Database::getInstance()->query("SELECT * FROM users WHERE access_level = 3 ORDER BY user_id ASC");
+        //return list of admins
+        return $admins;
     }
 }

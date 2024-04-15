@@ -6,6 +6,8 @@
     $userid = $user->data()->user_id;
     $conversations = Chat::getConversationsByUserId($userid);
     $message_id = $_GET['message_id'] ?? null;
+
+    require_once 'parsedown-1.7.4/Parsedown.php';
     ?>
 
     <div class="container my-5">
@@ -25,6 +27,7 @@
                     $recipients = Chat::getRecipientNamesByMessageId($conversation->message_id);
                     $recipientsString = implode(",", $recipients);
 
+
                 ?>
                     <a style="text-decoration: none; color: inherit;" href="chat.php?message_id=<?php echo $conversation->message_id; ?>">
                         <div class='bg-body' data-recipients='$recipientsString' style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>
@@ -43,6 +46,8 @@
                 ?>
 
             </div>
+
+
             <div class="col-sm-8 bg-body specific-conversation conversation-box">
                 <?php
                 if ($message_id) {
@@ -56,9 +61,43 @@
                     echo "<p>" . $name . " - " . $date . "</p>";
                     echo "<h3>$title</h3>";
                     echo "<small>" . implode(", ", Chat::getRecipientNamesByMessageId($message_id)) .  "</small> <br> <br>";
-                    echo "<p>$message</p>";
-                    echo "<textarea id='response' placeholder='Skriv dit svar her...'></textarea>";
-                    echo "<button id='send-response'>Send svar</button>";
+                ?>
+
+                    <div>
+                        <?php
+                        $Parsedown = new Parsedown();
+                        echo $Parsedown->text($message);
+                        ?>
+                    </div>
+
+                <?php
+
+                    // Fetch the responses for the selected message
+                    $responses = Chat::getResponsesByMessageId($message_id);
+
+                    usort($responses, function ($a, $b) {
+                        return strtotime($a->timestamp) > strtotime($b->timestamp);
+                    });
+
+                    echo "<div class='responses bg-body-tertiary'>";
+
+                    // Display the responses
+                    foreach ($responses as $response) {
+                        $responder = User::getFullName($response->sender);
+                        $responseContent = $response->message;
+                        $responseDate = $response->timestamp;
+
+                        echo "<div class='response'>";
+                        echo "<p>" . $responder . " - " . $responseDate . "</p>";
+                        $Parsedown = new Parsedown();
+                        echo $Parsedown->text($responseContent);
+                        echo "</div>";
+                    }
+
+                    echo "</div>";
+
+                    echo "<button id='response-button'>Skriv svar her</button>";
+                    echo "<button id='send-button' style='display: none;'>Send svar</button>";
                 } else {
                     echo "<h2> Vælg en samtale for at se beskeder </h2>";
                 }
@@ -68,24 +107,104 @@
     </div>
 </div>
 
+<form id="response-form" action="upload_responses.php" method="post">
+    <input type="hidden" id="response-content" name="response">
+    <input type="hidden" id="message-id" name="message_id" value="<?php echo $message_id ?>">
+    <input type="hidden" id="sender" name="sender" value="<?php echo $userid ?>">
+</form>
+
+<script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
+<script>
+    window.onload = function() {
+        const stackedit = new Stackedit();
+
+        // Open the StackEdit editor when the "Response" button is clicked
+        document.querySelector('#response-button').addEventListener('click', () => {
+            stackedit.openFile({
+                name: 'Response', // with an optional filename
+                content: {
+                    text: '' // and the Markdown content.
+                }
+            });
+            document.querySelector('#send-button').style.display = 'inline';
+        });
+
+        // Update the form fields when the file changes
+        stackedit.on('fileChange', (file) => {
+            document.querySelector('#response-content').value = file.content.text;
+        });
+
+        // Upload the form when the "Send" button is clicked
+        document.querySelector('#send-button').addEventListener('click', () => {
+            document.querySelector('#response-form').submit();
+        });
+    }
+</script>
+
+
+<?php
+$users = "";
+
+$allUsers = User::getAllUsers();
+var_dump($allUsers); // Debug line
+
+foreach ($allUsers as $user) {
+    $name = User::getFullName($user->user_id);
+
+    switch ($user->access_level) {
+        case 1:
+            $users .= "<option value='student-{$user->user_id}'>{$name} (Student)</option>";
+            break;
+        case 2:
+            $users .= "<option value='teacher-{$user->user_id}'>{$name} (Teacher)</option>";
+            break;
+        case 3:
+            $users .= "<option value='admin-{$user->user_id}'>{$name} (Admin)</option>";
+            break;
+        default:
+            echo "Unknown access_level: {$user->access_level} for user_id: {$user->user_id}<br>";
+    }
+}
+
+$classes = Classes::getAllClasses();
+
+foreach ($classes as $class) {
+    $users .= "<option value='class-{$class->class_id}'>{$class->name} (Class)</option>";
+}
+
+echo "<ul>{$users}</ul>";
+?>
 
 <!-- The Modal -->
 <div id="myModal" class="modal">
     <!-- Modal content -->
     <div class="modal-content bg-body-tertiary">
         <span class="close">&times;</span>
-        <input type="text" id="textbox1" placeholder="Emne">
-        <input type="text" id="textbox2" placeholder="Tilføj person">
-        <input type="hidden" id="textbox3" placeholder="Text Box 3">
-        <button id="message-button">Rediger besked</button>
-        <!-- File input -->
-        <input type="file" id="fileToUpload" style="display: none;">
-        <button id="upload-button">Upload File</button>
+        <input type="text" id="textbox1" name="title" placeholder="Emne" required>
+        <select id="users" name="users" required>
+            <option value="" disabled selected>Vælg bruger</option>
+            <?php echo $users; ?>
+        </select>
+        <button type="button" id="add-button">Tilføj modtager</button>
+        <ul id="recipients"></ul>
+        <input type="hidden" id="textbox3" name="message">
+        <button type="button" id="message-button">Rediger besked</button>
+        <form id="message-form" action="send_message.php" method="post">
+            <input type="hidden" id="title" name="title">
+            <input type="hidden" id="message" name="message">
+            <input type="hidden" id="sender" name="sender" value="<?php echo $userid ?>">
 
-        <!-- Button to send the message -->
-        <button id="send-button">Send</button>
+
+            <!-- File input -->
+            <input type="file" id="fileToUpload" name="file" style="display: none;">
+            <button type="button" id="upload-button">Upload File</button>
+            <!-- Button to send the message -->
+            <button type="submit" id="send-button">Send</button>
+        </form>
     </div>
 </div>
+
+
 
 <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
 <script>
@@ -103,17 +222,32 @@
         modal.style.display = "block";
     }
 
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
     }
+
+    // Get the users select element
+    var users = <?php echo json_encode(explode("\n", $users)); ?>;
+
+    // Populate the users select element
+    var usersSelect = document.getElementById("users");
+    
+    // Get the add button and the recipients list
+    var addButton = document.getElementById("add-button");
+    var recipientsList = document.getElementById("recipients");
+
+    // Add an event listener to the add button
+    addButton.addEventListener("click", function() {
+        // Add the selected user to the recipients list
+        var option = usersSelect.options[usersSelect.selectedIndex];
+        var li = document.createElement("li");
+        li.textContent = option.text;
+        li.dataset.value = option.value;
+        recipientsList.appendChild(li);
+    });
 
     const stackedit = new Stackedit();
 
@@ -126,6 +260,22 @@
             }
         });
 
+        // Prevent the form submission if the message content is empty
+        document.querySelector('#message-form').addEventListener('submit', (event) => {
+            if (!document.querySelector('#textbox3').value) {
+                alert('Please provide the message content.');
+                event.preventDefault();
+            }
+        });
+
+        document.querySelector('#message-form').addEventListener('submit', (event) => {
+            document.querySelector('#title').value = document.querySelector('#textbox1').value;
+            document.querySelector('#message').value = document.querySelector('#textbox3').value;
+            if (!document.querySelector('#message').value) {
+                alert('Please provide the message content.');
+                event.preventDefault();
+            }
+        });
         // Listen to StackEdit events and set the content of the third text box
         stackedit.on('fileChange', (file) => {
             document.querySelector('#textbox3').value = file.content.text;
@@ -221,5 +371,9 @@
 
     .no-pointer-events {
         pointer-events: none;
+    }
+
+    .response {
+        margin-top: 40px;
     }
 </style>
