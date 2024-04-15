@@ -171,8 +171,30 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                                     <h5 class="card-title">
                                         <?php echo $specific_post->name; ?>
                                     </h5>
+                                    <?php 
+                                    if (Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id)) {
+                                        $group = Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id);
+                                        $participants = Groups::getGroupsParticipants($group->group_id);
+
+                                        $group_real = Groups::getGroupById($group->group_id);
+
+                                        echo "<div>";
+                                        echo "<h2>" . $group_real->name . "</h2>";
+                                        foreach ($participants as $participant) {
+                                            echo "<div>";
+                                            echo "<h3>";
+                                            if (isset($participant->student)) {
+                                                echo User::getFullName($participant->student);
+                                            }
+                                            echo "</h3>";
+                                            echo "</div>";
+                                        }
+                                        echo "</div>";
+                                    }
+                                    ?>
+
                                     <!-- Add a button to download the PDF and trigger the toggle action -->
-                                    <a href="groups.php?group_room_id=<?php echo $specific_post->group_room_id; ?>&section_id=<?php echo $section_id; ?>">Lav grupper</a>
+                                    <a href="groups.php?group_room_id=<?php echo $specific_post->group_room_id; ?>&section_id=<?php echo $section_id; ?>">Rediger grupper</a>
                                 </div>
                             </div>
                         </div>

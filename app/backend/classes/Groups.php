@@ -124,19 +124,31 @@ class Groups
         }
     }
 
-    public static function isInAnyGroup($student_id)
-    {
-        $groups = Database::getInstance()->get('group_participants', array('student', '=', $student_id));
-        if (is_object($groups) && $groups->count()) {
-            return true;
-        }
-        return false;
-    }
-
     public static function removeEmptyGroups() {
         $db = Database::getInstance();
     
         // Delete groups with no participants
         $db->query("DELETE FROM `groups` WHERE group_id NOT IN (SELECT group_id FROM group_participants)");
+    }
+
+    public static function getCurrentGroup($student_id, $group_room_id)
+    {
+        $db = Database::getInstance();
+
+        // Get the group ID of the group the student is in
+        $group = $db->query("SELECT group_id FROM group_participants WHERE student = ? AND group_id IN (SELECT group_id FROM `groups` WHERE group_room = ?)", [$student_id, $group_room_id])->first();
+
+        if ($group) {
+            return $group;
+        }
+
+        return null;        
+    }
+
+    public static function getGroupById($group_id)
+    {
+        $group = Database::getInstance()->get('`groups`', array('group_id', '=', $group_id));
+
+        return $group->first();
     }
 }

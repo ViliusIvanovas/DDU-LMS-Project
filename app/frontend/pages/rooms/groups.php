@@ -1,14 +1,14 @@
 <?php
-$group_room_id = $_GET['group_room_id'];
 $section_id = $_GET['section_id'];
-
+$group_room_id = $_GET['group_room_id'];
 $groups = Groups::getGroupsByGroupRoomID($group_room_id);
 
 // Get the list of students without a group and the list of groups
 $class = Classes::getClassBySectionId($section_id);
 $allClassStudents = Classes::getAllStudents($class->class_id);
 $studentsNotInGroup = array_filter($allClassStudents, function ($student) {
-    return !Groups::isInAnyGroup($student->user_id);
+    $group_room_id = $_GET['group_room_id'];
+    return !Groups::getCurrentGroup($student->user_id, $group_room_id);
 });
 
 // Handle form submission for adding a student to a group
