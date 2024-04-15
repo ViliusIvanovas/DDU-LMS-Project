@@ -160,6 +160,27 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                 ?>
             <?php }
             ?>
+            <?php
+            if ($type->name == 'Grupper') {
+            ?>
+                <div class="col-md-2 section-row">
+                    <div class="card bg-body-tertiary mb-3 section">
+                        <div class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="text-field">
+                                    <h5 class="card-title">
+                                        <?php echo $specific_post->name; ?>
+                                    </h5>
+                                    <!-- Add a button to download the PDF and trigger the toggle action -->
+                                    <a href="groups.php?group_room_id=<?php echo $specific_post->group_room_id; ?>&section_id=<?php echo $section_id; ?>">Lav grupper</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php
+            }
+            ?>
         <?php endforeach; ?>
     </div>
 </div>

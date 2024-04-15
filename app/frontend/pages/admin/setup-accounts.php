@@ -1,113 +1,129 @@
+<!DOCTYPE html>
+<html>
+
 <body>
     <div class="container">
         <h1>Opstil konto</h1>
 
-        <form action="setup-accounts.php" method="post" id="accountForm">
-            <div class="mb-3">
-                <label for="numAccounts" class="form-label">Antal konti</label>
-                <select class="form-select" id="numAccounts" name="numAccounts">
-                    <?php for ($i = 1; $i <= 25; $i++) echo "<option value=\"$i\">$i</option>"; ?>
-                </select>
-            </div>
+        <?php
+        // Enable error reporting for debugging
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
 
-            <div id="accountInputs"></div>
+        require_once 'app/backend/core/Init.php';
 
-            <button type="submit" class="btn btn-primary">Opret konto</button>
-        </form>
-    </div>
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            error_log("POST request received");
+            if (Token::check(Input::get('csrf_token'))) {
+                error_log("Token check passed");
+                $requiredFields = ['email', 'firstName', 'lastName', 'address', 'birthdate', 'schoolStart', 'accessLevel'];
+                $missingFields = [];
 
-    <script>
-        function generateInputs() {
-            var numAccounts = document.getElementById('numAccounts').value;
-            var accountInputs = document.getElementById('accountInputs');
+                foreach ($requiredFields as $field) {
+                    if (empty($_POST[$field])) {
+                        $missingFields[] = $field;
+                    }
+                }
 
-            // Clear the current inputs
-            accountInputs.innerHTML = '';
+                var_dump($missingFields); // Debug missing fields
 
-            for (var i = 0; i < numAccounts; i++) {
-                accountInputs.innerHTML += `
-                <div class="row align-items-center rounded-3 border shadow-lg bg-body-tertiary">
+                if (empty($missingFields)) {
+                    error_log("No missing fields");
+                    $password = 'studx' . date('Ymd', strtotime(Input::get('birthdate')));
+                    $hashedPassword = Password::hash($password);
+
+                    $user_data = array(
+                        'email' => Input::get('email'),
+                        'password' => $hashedPassword,
+                        'first_name' => Input::get('firstName'),
+                        'middle_name' => Input::get('middleName'), // Add this line
+                        'last_name' => Input::get('lastName'),
+                        'address' => Input::get('address'),
+                        'birthdate' => date('Y-m-d H:i:s', strtotime(Input::get('birthdate'))),
+                        'start_date' => date('Y-m-d H:i:s', strtotime(Input::get('schoolStart'))),
+                        'access_level' => Input::get('accessLevel') == 'student' ? 1 : (Input::get('accessLevel') == 'teacher' ? 2 : 3),
+                        // Assuming default values for these fields
+                        'profile_picture' => null,
+                        'end_date' => null,
+                        'last_online' => date('Y-m-d H:i:s'),
+                    );
+
+                    var_dump($user_data); // Debug user data
+
+                    try {
+                        if (User::create($user_data)) {
+                            error_log("User created successfully");
+                            Session::flash('register-success', 'User created successfully.');
+                            Redirect::to('login.php');
+                        } else {
+                            error_log("Failed to create user");
+                            Session::flash('register-error', 'Failed to create user.');
+                        }
+                    } catch (Exception $e) {
+                        error_log('Caught exception: ' . $e->getMessage());
+                        echo 'Caught exception: ',  $e->getMessage(), "\n";
+                    }
+                } else {
+                    error_log("Missing fields: " . implode(", ", $missingFields));
+                    foreach ($missingFields as $field) {
+                        Session::flash('register-error', $field . ' is required.');
+                    }
+                }
+            } else {
+                error_log("Token check failed");
+            }
+        }
+        ?>
+
+        <form action="setup-accounts.php" method="post">
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email[]" required>
+                <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-3">
                 <label for="firstName" class="form-label">Fornavn</label>
-                <input type="text" class="form-control" id="firstName" name="firstName[]" required>
+                <input type="text" class="form-control" id="firstName" name="firstName" required>
             </div>
             <div class="mb-3">
                 <label for="middleName" class="form-label">Mellemnavn</label>
-                <input type="text" class="form-control" id="middleName" name="middleName[]">
+                <input type="text" class="form-control" id="middleName" name="middleName"> <!-- Add this line -->
             </div>
             <div class="mb-3">
                 <label for="lastName" class="form-label">Efternavn</label>
-                <input type="text" class="form-control" id="lastName" name="lastName[]" required>
+                <input type="text" class="form-control" id="lastName" name="lastName" required>
             </div>
             <div class="mb-3">
                 <label for="address" class="form-label">Adresse</label>
-                <input type="text" class="form-control" id="address" name="address[]" required>
+                <input type="text" class="form-control" id="address" name="address" required>
             </div>
             <div class="mb-3">
                 <label for="birthdate" class="form-label">Fødselsdato</label>
-                <input type="date" class="form-control" id="birthdate" name="birthdate[]" required>
+                <input type="date" class="form-control" id="birthdate" name="birthdate" required>
             </div>
             <div class="mb-3">
                 <label for="schoolStart" class="form-label">Skolestart</label>
-                <input type="date" class="form-control" id="schoolStart" name="schoolStart[]" required>
+                <input type="date" class="form-control" id="schoolStart" name="schoolStart" required>
             </div>
             <div class="mb-3">
                 <label for="accessLevel" class="form-label">Adgangsniveau</label>
-                <select class="form-select" id="accessLevel" name="accessLevel[]" required>
+                <select class="form-select" id="accessLevel" name="accessLevel" required>
                     <option value="student">Studerende</option>
                     <option value="teacher">Lærer</option>
                     <option value="admin">Administrator</option>
                 </select>
             </div>
-        </div>
-                `;
-            }
+
+            <button type="submit" class="btn btn-primary">Opret konto</button>
+        </form>
+
+        <?php
+        if (Session::exists('register-success')) {
+            echo '<div class="alert alert-success"><strong></strong>' . Session::flash('register-success') . '<a href="login.php"> Login Here</a></div>';
+        } else if (Session::exists('register-error')) {
+            echo '<div class="alert alert-danger"><strong></strong>' . Session::flash('register-error') . '</div>';
         }
-
-        // Generate the initial inputs
-        generateInputs();
-
-        function formatDateForMySQL(date) {
-            var yyyy = date.getFullYear();
-            var mm = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero based
-            var dd = String(date.getDate()).padStart(2, '0');
-            var hh = String(date.getHours()).padStart(2, '0');
-            var mi = String(date.getMinutes()).padStart(2, '0');
-            var ss = String(date.getSeconds()).padStart(2, '0');
-
-            return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-        }
-
-        document.getElementById('accountForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            var formData = new FormData(this);
-
-            var birthdates = document.querySelectorAll('input[name="birthdate[]"]');
-            var schoolStarts = document.querySelectorAll('select[name="schoolStart[]"]');
-
-            birthdates.forEach(function(input) {
-                var date = new Date(input.value);
-                input.value = formatDateForMySQL(date);
-            });
-
-            schoolStarts.forEach(function(select) {
-                var date = new Date(select.value);
-                select.value = formatDateForMySQL(date);
-            });
-
-            fetch('setup-accounts.php', {
-                    method: 'POST',
-                    body: formData
-                }).then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.error(error));
-        });
-    </script>
+        ?>
+    </div>
 </body>
 
 </html>

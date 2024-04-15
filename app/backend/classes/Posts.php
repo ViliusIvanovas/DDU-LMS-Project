@@ -37,7 +37,7 @@ class Posts
             $bulletin_board = Database::getInstance()->get('bulletin_boards', array('bulletin_board_id', '=', $specific_post_id));
             return $bulletin_board->first();
         } else if ($type_name->name == 'Grupper') {
-            $group = Database::getInstance()->get('groups', array('group_id', '=', $specific_post_id));
+            $group = Database::getInstance()->get('group_rooms', array('group_room_id', '=', $specific_post_id));
             return $group->first();
         } else if ($type_name->name == 'Fil') {
             $file = Database::getInstance()->get('files', array('file_id', '=', $specific_post_id));

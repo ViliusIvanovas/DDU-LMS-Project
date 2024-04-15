@@ -108,4 +108,17 @@ class Classes
         // Return the teachers
         return $teachers;
     }
+
+    public static function getClassBySectionId($sectionId)
+    {
+        // get room_id from section
+        $section = Database::getInstance()->get('sections', array('section_id', '=', $sectionId));
+        $room_id = $section->first()->room_id;
+
+        // get class_id from room
+        $room = Database::getInstance()->get('rooms', array('room_id', '=', $room_id));
+        $class_id = $room->first()->class_id;
+
+        return self::getClassById($class_id);
+    }
 }
