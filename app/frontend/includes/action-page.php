@@ -24,7 +24,7 @@
     }
 
     #main.shrink {
-        margin-right: 50%;
+        margin-right: 45%;
     }
 </style>
 

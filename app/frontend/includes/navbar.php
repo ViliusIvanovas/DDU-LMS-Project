@@ -68,7 +68,7 @@
         <button id="collapseButton" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></button>
       </div>
     </div>
-    <div class="flex-grow-1 content">
+    <div class="flex-grow-1 content" id="main">
       <!-- Main content here -->
 
 
