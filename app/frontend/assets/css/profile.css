@@ -189,12 +189,12 @@
 }
 
 :root {
-    --sidebar-background-light: linear-gradient(to bottom, var(--bs-light), var(--bs-primary));
-    --sidebar-background-dark: linear-gradient(to bottom, var(--bs-dark), var(--bs-primary));
+    --sidebar-background-light: linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(252,247,248,1) 56%);
+    --sidebar-background-dark: linear-gradient(to bottom, rgba(148,215,242,1) 0%, rgba(49,49,49,1) 44%, rgba(28,27,31,1) 83%); 
 }
 
 .sidebar {
-    width: 320px;
+    width: 320px; 
     transition: width 0.3s;
     display: flex;
     flex-direction: column;

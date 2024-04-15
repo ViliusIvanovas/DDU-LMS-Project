@@ -16,8 +16,8 @@
                 <span class="sidebar-item">Expandable Item</span>
               </a>
               <ul id="submenu1" class="list-unstyled collapse">
-                <li><a href="#" class="nav-link link-body-emphasis">Sub Item 1</a></li>
-                <li><a href="#" class="nav-link link-body-emphasis">Sub Item 2</a></li>
+                <li><a href="rooms.php" class="nav-link link-body-emphasis">Dine rum</a></li>
+                <li><a href="schedule.php" class="nav-link link-body-emphasis">Skema</a></li>
               </ul>
             </li>
             <!-- More items here -->
@@ -26,7 +26,9 @@
       </div>
       <div class="sidebar-footer d-flex justify-content-evenly flex-wrap">
         <!-- Account, theme buttons here -->
-        <button id="accountButton" class="btn btn-primary d-flex"><i class="bi bi-person"></i></button> <!-- Account icon -->
+        <a href="classes.php">
+    <button id="accountButton" class="btn btn-primary d-flex"><i class="bi bi-person"></i></button> <!-- Account icon -->
+</a>
         <div class="dropup">
           <button class="btn btn-primary py-2 dropdown-toggle d-flex" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
             <svg class="bi my-1 theme-icon-active" class="emIcon">
