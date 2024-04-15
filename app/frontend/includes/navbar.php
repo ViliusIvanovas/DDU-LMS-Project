@@ -88,11 +88,11 @@
         // Function to set the color mode
         function setColorMode(mode) {
           if (mode === 'light') {
-            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-light), var(--bs-primary))');
-            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(252,247,248,1) 56%);');
+            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(49,49,49,1) 44%, rgba(28,27,31,1) 83%)');
           } else if (mode === 'dark') {
-            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
-            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to bottom, var(--bs-dark), var(--bs-primary))');
+            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(49,49,49,1) 44%, rgba(28,27,31,1) 83%)');
+            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(49,49,49,1) 44%, rgba(28,27,31,1) 83%)'); 
           }
         }
 
