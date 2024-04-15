@@ -28,9 +28,11 @@
                     $recipientsString = implode(",", $recipients);
 
 
-                ?>
-                    <a style="text-decoration: none; color: inherit;" href="chat.php?message_id=<?php echo $conversation->message_id; ?>">
-                        <div class='bg-body' data-recipients='$recipientsString' style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>
+                    ?>
+                    <a style="text-decoration: none; color: inherit;"
+                        href="chat.php?message_id=<?php echo $conversation->message_id; ?>">
+                        <div class='bg-body' data-recipients='$recipientsString'
+                            style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>
                             <?php
                             echo "<div class='conversation' data-message-id='{$conversation->message_id}'>";
                             echo "<h3>$title</h3>";
@@ -41,7 +43,7 @@
                             ?>
                         </div>
                     </a>
-                <?php
+                    <?php
                 }
                 ?>
 
@@ -60,8 +62,8 @@
 
                     echo "<p>" . $name . " - " . $date . "</p>";
                     echo "<h3>$title</h3>";
-                    echo "<small>" . implode(", ", Chat::getRecipientNamesByMessageId($message_id)) .  "</small> <br> <br>";
-                ?>
+                    echo "<small>" . implode(", ", Chat::getRecipientNamesByMessageId($message_id)) . "</small> <br> <br>";
+                    ?>
 
                     <div>
                         <?php
@@ -70,7 +72,7 @@
                         ?>
                     </div>
 
-                <?php
+                    <?php
 
                     // Fetch the responses for the selected message
                     $responses = Chat::getResponsesByMessageId($message_id);
@@ -115,7 +117,7 @@
 
 <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
 <script>
-    window.onload = function() {
+    window.onload = function () {
         const stackedit = new Stackedit();
 
         // Open the StackEdit editor when the "Response" button is clicked
@@ -146,7 +148,6 @@
 $users = "";
 
 $allUsers = User::getAllUsers();
-var_dump($allUsers); // Debug line
 
 foreach ($allUsers as $user) {
     $name = User::getFullName($user->user_id);
@@ -218,15 +219,20 @@ echo "<ul>{$users}</ul>";
     var span = document.getElementsByClassName("close")[0];
 
     // When the user clicks the button, open the modal 
-    btn.onclick = function() {
+    btn.onclick = function () {
         modal.style.display = "block";
     }
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
+    window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
     }
 
     // Get the users select element
@@ -234,19 +240,63 @@ echo "<ul>{$users}</ul>";
 
     // Populate the users select element
     var usersSelect = document.getElementById("users");
-    
+
     // Get the add button and the recipients list
     var addButton = document.getElementById("add-button");
     var recipientsList = document.getElementById("recipients");
 
+    var loggedInUserId = "<?php echo $userid; ?>"; // Get the logged-in user's ID
+
     // Add an event listener to the add button
-    addButton.addEventListener("click", function() {
+    addButton.addEventListener("click", function () {
         // Add the selected user to the recipients list
         var option = usersSelect.options[usersSelect.selectedIndex];
-        var li = document.createElement("li");
-        li.textContent = option.text;
-        li.dataset.value = option.value;
-        recipientsList.appendChild(li);
+
+
+        if (option.text !== "Vælg bruger" && option.value !== loggedInUserId) { // Compare as strings
+            var li = document.createElement("li");
+            li.textContent = option.text;
+            li.dataset.value = option.value;
+
+            // Create a remove button
+            var removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.addEventListener("click", function () {
+                // Remove the recipient from the recipients list
+                recipientsList.removeChild(li);
+
+                // Add the recipient back to the users select
+                usersSelect.add(option);
+            });
+            li.appendChild(removeButton);
+
+            recipientsList.appendChild(li);
+
+            // Remove the selected user from the users select
+            usersSelect.remove(usersSelect.selectedIndex);
+        } else {
+            alert("Please select a different user.");
+        }
+    });
+
+    // Add an event listener to the send button
+    document.getElementById("send-button").addEventListener("click", function (event) {
+        // Check if there are any recipients
+        var recipients = document.querySelectorAll("#recipients li");
+        if (recipients.length === 0) {
+            // If there are no recipients, display an alert and prevent the form from being submitted
+            alert("Please add a user or class before sending the message.");
+            event.preventDefault();
+        } else {
+            // If there are recipients, add hidden input fields for each one
+            recipients.forEach(function (recipient) {
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "recipients[]";
+                input.value = recipient.dataset.value;
+                document.getElementById("message-form").appendChild(input);
+            });
+        }
     });
 
     const stackedit = new Stackedit();
@@ -289,12 +339,12 @@ echo "<ul>{$users}</ul>";
     var fileInput = document.getElementById("fileToUpload");
 
     // When the user clicks the upload button, trigger the file input click
-    uploadButton.onclick = function() {
+    uploadButton.onclick = function () {
         fileInput.click();
     }
 
     // When the user selects a file, display the file name
-    fileInput.onchange = function() {
+    fileInput.onchange = function () {
         if (fileInput.files.length > 0) {
             uploadButton.textContent = "Upload File: " + fileInput.files[0].name;
         }
