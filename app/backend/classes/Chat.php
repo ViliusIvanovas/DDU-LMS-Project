@@ -82,11 +82,33 @@ class Chat
         return Database::getInstance()->get('message_responses', ['message_id', '=', $message_id])->results();
     }
 
-    public static function createMessage($data)
+    public static function createMessage($data, $recipients)
     {
         $database = Database::getInstance();
 
-        $lastInsertedId = $database->insert('messages', $data);
+        // Insert the message into the messages table
+        $messageData = [
+            'title' => $data['title'],
+            'message' => $data['message'],
+            'sender' => $data['sender'],
+            'sent_at' => date('Y-m-d H:i:s'), // Current date and time
+        ];
+        $lastInsertedId = $database->insert('messages', $messageData);
+
+        // Insert a record into the message_recipients table for each recipient
+        foreach ($recipients as $recipient) {
+            // Check if the recipient exists in the users table
+            $user = $database->get('users', ['user_id', '=', $recipient])->first();
+            if (!$user) {
+                throw new Exception("User not found: $recipient");
+            }
+
+            $recipientData = [
+                'message' => $lastInsertedId,
+                'recipient' => $recipient,
+            ];
+            $database->insert('message_recipients', $recipientData);
+        }
 
         return $lastInsertedId;
     }

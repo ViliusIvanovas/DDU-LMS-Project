@@ -154,13 +154,13 @@ foreach ($allUsers as $user) {
 
     switch ($user->access_level) {
         case 1:
-            $users .= "<option value='student-{$user->user_id}'>{$name} (Student)</option>";
+            $users .= "<option value='{$user->user_id}'>{$name} (Student)</option>";
             break;
         case 2:
-            $users .= "<option value='teacher-{$user->user_id}'>{$name} (Teacher)</option>";
+            $users .= "<option value='{$user->user_id}'>{$name} (Teacher)</option>";
             break;
         case 3:
-            $users .= "<option value='admin-{$user->user_id}'>{$name} (Admin)</option>";
+            $users .= "<option value='{$user->user_id}'>{$name} (Admin)</option>";
             break;
         default:
             echo "Unknown access_level: {$user->access_level} for user_id: {$user->user_id}<br>";
@@ -241,22 +241,31 @@ echo "<ul>{$users}</ul>";
     // Populate the users select element
     var usersSelect = document.getElementById("users");
 
-    // Get the add button and the recipients list
+    // Get the button that adds a recipient
     var addButton = document.getElementById("add-button");
-    var recipientsList = document.getElementById("recipients");
 
-    var loggedInUserId = "<?php echo $userid; ?>"; // Get the logged-in user's ID
+    // Get the select element that contains the users
+    var usersSelect = document.getElementById("users");
+
+    // Get the list that will contain the recipients
+    var recipientsList = document.getElementById("recipients");
 
     // Add an event listener to the add button
     addButton.addEventListener("click", function () {
         // Add the selected user to the recipients list
         var option = usersSelect.options[usersSelect.selectedIndex];
 
-
-        if (option.text !== "Vælg bruger" && option.value !== loggedInUserId) { // Compare as strings
+        if (option.text !== "Vælg bruger") {
             var li = document.createElement("li");
             li.textContent = option.text;
             li.dataset.value = option.value;
+
+            // Create a hidden input field for the recipient
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "recipients[]";
+            input.value = option.value;
+            document.getElementById("message-form").appendChild(input);
 
             // Create a remove button
             var removeButton = document.createElement("button");
@@ -264,6 +273,9 @@ echo "<ul>{$users}</ul>";
             removeButton.addEventListener("click", function () {
                 // Remove the recipient from the recipients list
                 recipientsList.removeChild(li);
+
+                // Remove the hidden input field for the recipient
+                document.getElementById("message-form").removeChild(input);
 
                 // Add the recipient back to the users select
                 usersSelect.add(option);
@@ -275,7 +287,7 @@ echo "<ul>{$users}</ul>";
             // Remove the selected user from the users select
             usersSelect.remove(usersSelect.selectedIndex);
         } else {
-            alert("Please select a different user.");
+            alert("Please select a user.");
         }
     });
 
@@ -287,15 +299,6 @@ echo "<ul>{$users}</ul>";
             // If there are no recipients, display an alert and prevent the form from being submitted
             alert("Please add a user or class before sending the message.");
             event.preventDefault();
-        } else {
-            // If there are recipients, add hidden input fields for each one
-            recipients.forEach(function (recipient) {
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "recipients[]";
-                input.value = recipient.dataset.value;
-                document.getElementById("message-form").appendChild(input);
-            });
         }
     });
 

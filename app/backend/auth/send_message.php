@@ -5,23 +5,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sender = $_POST['sender'];
     $recipients = $_POST['recipients'];
 
-    if (!empty ($title) && !empty ($message)) {
-        foreach ($recipients as $recipient) {
-            $data = array(
-                'title' => $title,
-                'message' => $message,
-                'sender' => $sender,
-                'recipient' => $recipient,
-            );
+    var_dump($title, $message, $sender, $recipients);
 
-            try {
-                $lastInsertedId = Chat::createMessage($data);
+    if (!empty($title) && !empty($message)) {
+        $data = array(
+            'title' => $title,
+            'message' => $message,
+            'sender' => $sender,
+        );
 
-                header("Location: chat.php?message_id=$lastInsertedId"); // Redirect to chat.php with the message id
-                exit();
-            } catch (Exception $e) {
-                echo 'Error: ' . $e->getMessage();
-            }
+        try {
+            $lastInsertedId = Chat::createMessage($data, $recipients);
+
+            //header("Location: chat.php?message_id=$lastInsertedId"); // Redirect to chat.php with the message id
+            exit();
+        } catch (Exception $e) {
+            echo 'Error: ' . $e->getMessage();
         }
     } else {
         echo 'Error: The title or message content was not provided.';
