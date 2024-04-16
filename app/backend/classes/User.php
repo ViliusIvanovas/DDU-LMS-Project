@@ -201,4 +201,24 @@ class User
         //return list of admins
         return $admins;
     }
+
+    public static function isUserTeacherForClass($user_id, $class_id)
+    {
+        $teacher = Database::getInstance()->query("SELECT * FROM class_teachers WHERE teacher_id = $user_id AND class_id = $class_id");
+        if ($teacher->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function isUserStudentForClass($user_id, $class_id)
+    {
+        $student = Database::getInstance()->query("SELECT * FROM class_students WHERE student_id = $user_id AND class_id = $class_id");
+        if ($student->count() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

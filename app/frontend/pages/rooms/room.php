@@ -75,6 +75,10 @@ $room_id = $_GET['room_id'];
 $room = Rooms::getRoomById($room_id);
 $class = Classes::getClassById($room->class_id);
 $sections = Rooms::getAllSectionsByRoomId($room_id);
+
+$user_id = $user->data()->user_id;
+$is_teacher = User::isUserTeacherForClass($user_id, $class->class_id);
+$is_student = User::isUserStudentForClass($user_id, $class->class_id);
 ?>
 
 <div class="container">
@@ -85,7 +89,13 @@ $sections = Rooms::getAllSectionsByRoomId($room_id);
         <h3><?php echo $class->name ?></h3>
     </a>
 
-    <button> <a href="give_grade.php?room_id=<?php echo $room_id; ?>">Giv Karakter</a></button>
+    <?php if ($is_teacher) : ?>
+        <button> <a href="give_grade.php?room_id=<?php echo $room_id; ?>">Giv Karakter</a></button>
+    <?php endif; ?>
+
+    <?php if ($is_student) : ?>
+        <button> <a href="view_grades.php?room_id=<?php echo $room_id; ?>">Se Karakterer</a></button>
+    <?php endif; ?>
 
     <div class="row">
         <?php foreach ($sections as $section) : ?>

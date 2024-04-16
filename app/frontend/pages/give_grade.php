@@ -1,6 +1,12 @@
 <?php
 $room_id = $_GET['room_id'];
 $class = Rooms::getClassByRoomId($room_id);
+$user_id = $user->data()->user_id;
+$is_teacher = User::isUserTeacherForClass($user_id, $class->class_id);
+if(!$is_teacher)  :
+    Redirect::to('index.php');
+endif;
+
 $students = Classes::getAllStudents($class->class_id);
 ?>
 
@@ -9,6 +15,8 @@ $students = Classes::getAllStudents($class->class_id);
     <form method="POST" action="submit_grades.php">
         <label for="release_time">Vælg frigivelsestidspunkt:</label>
         <input type="datetime-local" id="release_time" name="release_time" required>
+        <p id="error" style="color: red; display: none;">Vælg venligst en dato og tid.</p>
+        <input type="hidden" name="room_id" value="<?php echo $room_id; ?>">
         <div class="row">
             <table>
                 <tr>
