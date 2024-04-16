@@ -121,4 +121,20 @@ class Classes
 
         return self::getClassById($class_id);
     }
+
+    public static function getAllAssignmentsForPerson($userId)
+    {
+        // get all of users classes
+        $classes = Classes::getAllClassesByUserId($userId);
+
+        // get all assignments for each class
+        $assignments = [];
+
+        foreach ($classes as $class) {
+            $sql = "SELECT * FROM assignments WHERE class = ?";
+            $assignments[] = Database::getInstance()->query($sql, [$class->class_id])->results();
+        }
+
+        return $assignments;
+    }
 }

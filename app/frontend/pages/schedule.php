@@ -1,15 +1,21 @@
 <style>
     .schedule-box {
         height: 500px;
+        box-sizing: border-box;
+        /* Added */
     }
 
     .time-table {
         width: 100%;
         table-layout: fixed;
+        box-sizing: border-box;
+        /* Added */
     }
 
     .timeline {
         width: 10%;
+        box-sizing: border-box;
+        /* Added */
     }
 
     .timeline p {
@@ -18,11 +24,15 @@
         transform: rotate(180deg);
         border-bottom: 1px solid #e9ecef;
         height: 10%;
+        box-sizing: border-box;
+        /* Added */
     }
 
     .day {
         width: 22%;
         position: relative;
+        box-sizing: border-box;
+        /* Added */
     }
 
     .subject {
@@ -30,22 +40,21 @@
         border: 1px solid #e9ecef;
         border-radius: 5px;
         padding: 2px;
-        /* Reduced padding */
         margin-bottom: 10px;
         width: 100%;
         font-size: 0.8em;
         top: 0.5em;
         overflow: hidden;
-        /* Added */
         text-overflow: ellipsis;
-        /* Added */
         white-space: nowrap;
+        box-sizing: border-box;
         /* Added */
     }
 
     .subject p {
         margin-bottom: 0.1em;
-        /* Reduced margin */
+        box-sizing: border-box;
+        /* Added */
     }
 
     .subject-note-available {
@@ -55,11 +64,15 @@
 
     .subject h4 {
         font-size: 1.2em;
+        box-sizing: border-box;
+        /* Added */
     }
 
     .scrollable-table {
         height: 500px;
         overflow: auto;
+        box-sizing: border-box;
+        /* Added */
     }
 </style>
 
@@ -111,7 +124,7 @@
                                     }
 
                                     // sort
-                                    usort($subjects, function($a, $b) {
+                                    usort($subjects, function ($a, $b) {
                                         return strtotime($a->start_time) - strtotime($b->start_time);
                                     });
 
@@ -170,8 +183,38 @@
             </div>
         </div>
         <div class="col-sm-3 bg-body deadlines" style="height: 100%;">
-            <h3>afleveringer</h3>
-            Testy test
+            <h3>Afleveringer</h3>
+            <div class="scrollable-table">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Opgave</th>
+                            <th>Deadline</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $assignments = Classes::getAllAssignmentsForPerson($user->data()->user_id);
+
+                        if (is_object($assignments) && get_class($assignments) == 'Database' && $assignments->count()) {
+                            $assignments = $assignments->results();
+                        }
+
+                        var_dump($assignments);
+
+                        foreach ($assignments as $assignment) {
+                        ?>
+
+                            <tr>
+                                <td><?php echo $assignment->name; ?></td>
+                                <td><?php echo date('d-m-Y', strtotime($assignment->deadline)); ?></td>
+                            </tr>
+
+                        <?php
+                        }
+                        ?>
+                    </tbody>
+                </table>
         </div>
     </div>
 </div>
@@ -179,6 +222,9 @@
 <script>
     window.onload = function() {
         var subjects = document.querySelectorAll('.subject');
+        var timelineHeight = document.querySelector('.timeline').offsetHeight;
+        var scheduleMinutes = 540; // Total minutes from 08:00 to 17:00
+
         subjects.forEach(function(subject) {
             var timeText = subject.querySelector('p').textContent;
             var times = timeText.split(' - ');
@@ -188,13 +234,11 @@
             var startDate = new Date("1970-01-01T" + startTime + ":00");
             var endDate = new Date("1970-01-01T" + endTime + ":00");
 
-            var duration = (endDate - startDate) / 60000;
-            var startMinutes = (startDate.getHours() * 60) + startDate.getMinutes() - 480;
+            var duration = (endDate - startDate) / 60000; // Duration in minutes
+            var startMinutes = (startDate.getHours() * 60) + startDate.getMinutes() - 480; // Minutes from 08:00
 
-            var containerHeight = document.querySelector('.timeline').offsetHeight;
-            var scheduleMinutes = 540;
-            subject.style.height = (duration / scheduleMinutes * containerHeight) + 'px';
-            subject.style.top = (startMinutes / scheduleMinutes * containerHeight) + 'px';
+            subject.style.height = (duration / scheduleMinutes * timelineHeight) + 'px';
+            subject.style.top = (startMinutes / scheduleMinutes * timelineHeight) + 'px';
         });
     };
 </script>
