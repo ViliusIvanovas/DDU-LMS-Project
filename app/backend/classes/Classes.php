@@ -54,7 +54,7 @@ class Classes
         $classIds = array_merge($studentClasses, $teacherClasses);
 
         // Check if the user is in any classes
-        if (empty ($classIds)) {
+        if (empty($classIds)) {
             throw new Exception('No classes found for this user');
         }
 
@@ -122,19 +122,49 @@ class Classes
         return self::getClassById($class_id);
     }
 
-    public static function getAllAssignmentsForPerson($userId)
+    public static function getAllAssignmentsByStudent($userId)
     {
         // get all of users classes
         $classes = Classes::getAllClassesByUserId($userId);
 
-        // get all assignments for each class
-        $assignments = [];
+        // get all class IDs
+        $classIds = array_map(function ($class) {
+            return $class->class_id;
+        }, $classes);
 
-        foreach ($classes as $class) {
-            $sql = "SELECT * FROM assignments WHERE class = ?";
-            $assignments[] = Database::getInstance()->query($sql, [$class->class_id])->results();
-        }
+        // convert class IDs to a comma-separated string
+        $classIdsStr = implode(',', $classIds);
+
+        // get all assignments for the classes
+        $sql = "SELECT * FROM assignments WHERE class IN ($classIdsStr)";
+        $assignments = Database::getInstance()->query($sql)->results();
 
         return $assignments;
+    }
+
+    public static function getPostLinkedToAssignment($assignmentId)
+    {
+        $assignment = Database::getInstance()->get('assignments', array('assignment_id', '=', $assignmentId));
+        if ($assignment->count()) {
+            // get all posts with post_type = 7
+            $posts = Database::getInstance()->get('posts', array('post_type', '=', 7))->results();
+
+            // get post_id from assignment, by finding where specific_post_id = assignment_id
+            foreach ($posts as $post) {
+                if ($post->specific_post_id == $assignmentId) {
+                    return $post;
+                }
+            }
+        }
+        throw new Exception("Post not found for assignment ID: $assignmentId");
+    }
+
+    public static function getAssignmentById($assignmentId)
+    {
+        $assignment = Database::getInstance()->get('assignments', array('assignment_id', '=', $assignmentId));
+        if ($assignment->count()) {
+            return $assignment->first();
+        }
+        throw new Exception("Assignment not found for assignment ID: $assignmentId");
     }
 }
