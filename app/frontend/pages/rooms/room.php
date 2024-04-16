@@ -85,6 +85,8 @@ $sections = Rooms::getAllSectionsByRoomId($room_id);
         <h3><?php echo $class->name ?></h3>
     </a>
 
+    <button> <a href="give_grade.php?room_id=<?php echo $room_id; ?>">Giv Karakter</a></button>
+
     <div class="row">
         <?php foreach ($sections as $section) : ?>
             <div class="col-md-4 section-row">

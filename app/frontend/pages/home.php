@@ -79,10 +79,10 @@
     finibus sed. Integer faucibus placerat leo, quis condimentum lorem tincidunt a.
     <br>
     <br>
-    <button id="toggleButton" class="ActionPageButton">Toggle Action Page</button>
     <a href="classes.php">My classes</a>
     <a href="rooms.php">My rooms</a>
     <a href="schedule.php">My schedule</a>
     <a href="chat.php">My chats</a>
+    <a href="check_abscence.php">Check abscence</a>
     <a href="logout.php">Logout</a>
 </div>

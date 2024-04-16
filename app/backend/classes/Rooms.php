@@ -50,4 +50,11 @@ class Rooms
             return $sections->results();
         }
     }
+
+    public static function getClassByRoomId($room_id)
+    {
+        $room = self::getRoomById($room_id);
+        $class = Classes::getClassById($room->class_id);
+        return $class;
+    }
 }

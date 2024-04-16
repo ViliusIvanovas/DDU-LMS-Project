@@ -28,11 +28,9 @@
                     $recipientsString = implode(",", $recipients);
 
 
-                    ?>
-                    <a style="text-decoration: none; color: inherit;"
-                        href="chat.php?message_id=<?php echo $conversation->message_id; ?>">
-                        <div class='bg-body' data-recipients='$recipientsString'
-                            style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>
+                ?>
+                    <a style="text-decoration: none; color: inherit;" href="chat.php?message_id=<?php echo $conversation->message_id; ?>">
+                        <div class='bg-body' data-recipients='$recipientsString' style='border: 1px solid gray; padding: 10px; margin: 10px; height: auto; width: auto; '>
                             <?php
                             echo "<div class='conversation' data-message-id='{$conversation->message_id}'>";
                             echo "<h3>$title</h3>";
@@ -43,7 +41,7 @@
                             ?>
                         </div>
                     </a>
-                    <?php
+                <?php
                 }
                 ?>
 
@@ -63,7 +61,7 @@
                     echo "<p>" . $name . " - " . $date . "</p>";
                     echo "<h3>$title</h3>";
                     echo "<small>" . implode(", ", Chat::getRecipientNamesByMessageId($message_id)) . "</small> <br> <br>";
-                    ?>
+                ?>
 
                     <div>
                         <?php
@@ -72,7 +70,7 @@
                         ?>
                     </div>
 
-                    <?php
+                <?php
 
                     // Fetch the responses for the selected message
                     $responses = Chat::getResponsesByMessageId($message_id);
@@ -99,7 +97,7 @@
                     echo "</div>";
 
                     echo "<button id='response-button'>Skriv svar her</button>";
-                    echo "<button id='send-button' style='display: none;'>Send svar</button>";
+                    echo "<button id='reply-button' data-message-type='reply' style='display: none;'>Send svar</button>";
                 } else {
                     echo "<h2> Vælg en samtale for at se beskeder </h2>";
                 }
@@ -109,15 +107,15 @@
     </div>
 </div>
 
-<form id="response-form" action="upload_responses.php" method="post">
-    <input type="hidden" id="response-content" name="response">
+<form id="reply-form" action="upload_responses.php" method="post">
+    <input type="hidden" id="reply-content" name="response">
     <input type="hidden" id="message-id" name="message_id" value="<?php echo $message_id ?>">
     <input type="hidden" id="sender" name="sender" value="<?php echo $userid ?>">
 </form>
 
 <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
 <script>
-    window.onload = function () {
+    window.onload = function() {
         const stackedit = new Stackedit();
 
         // Open the StackEdit editor when the "Response" button is clicked
@@ -128,17 +126,17 @@
                     text: '' // and the Markdown content.
                 }
             });
-            document.querySelector('#send-button').style.display = 'inline';
+            document.querySelector('#reply-button').style.display = 'inline';
         });
 
         // Update the form fields when the file changes
         stackedit.on('fileChange', (file) => {
-            document.querySelector('#response-content').value = file.content.text;
+            document.querySelector('#reply-content').value = file.content.text;
         });
 
         // Upload the form when the "Send" button is clicked
-        document.querySelector('#send-button').addEventListener('click', () => {
-            document.querySelector('#response-form').submit();
+        document.querySelector('#reply-button').addEventListener('click', () => {
+            document.querySelector('#reply-form').submit();
         });
     }
 </script>
@@ -146,6 +144,7 @@
 
 <?php
 $users = "";
+$classesList = "";
 
 $allUsers = User::getAllUsers();
 
@@ -170,10 +169,8 @@ foreach ($allUsers as $user) {
 $classes = Classes::getAllClasses();
 
 foreach ($classes as $class) {
-    $users .= "<option value='class-{$class->class_id}'>{$class->name} (Class)</option>";
+    $classesList .= "<option value='class{$class->class_id}'>{$class->name} (Class)</option>";
 }
-
-echo "<ul>{$users}</ul>";
 ?>
 
 <!-- The Modal -->
@@ -183,8 +180,10 @@ echo "<ul>{$users}</ul>";
         <span class="close">&times;</span>
         <input type="text" id="textbox1" name="title" placeholder="Emne" required>
         <select id="users" name="users" required>
-            <option value="" disabled selected>Vælg bruger</option>
-            <?php echo $users; ?>
+            <option value="" disabled selected>Vælg modtager</option>
+            <?php echo $users;
+            echo $classesList;
+            ?>
         </select>
         <button type="button" id="add-button">Tilføj modtager</button>
         <ul id="recipients"></ul>
@@ -194,8 +193,6 @@ echo "<ul>{$users}</ul>";
             <input type="hidden" id="title" name="title">
             <input type="hidden" id="message" name="message">
             <input type="hidden" id="sender" name="sender" value="<?php echo $userid ?>">
-
-
             <!-- File input -->
             <input type="file" id="fileToUpload" name="file" style="display: none;">
             <button type="button" id="upload-button">Upload File</button>
@@ -219,19 +216,19 @@ echo "<ul>{$users}</ul>";
     var span = document.getElementsByClassName("close")[0];
 
     // When the user clicks the button, open the modal 
-    btn.onclick = function () {
+    btn.onclick = function() {
         modal.style.display = "block";
     }
 
     // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function (event) {
+    window.onclick = function(event) {
         if (event.target == modal) {
             modal.style.display = "none";
         }
     }
 
     // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
+    span.onclick = function() {
         modal.style.display = "none";
     }
 
@@ -251,7 +248,7 @@ echo "<ul>{$users}</ul>";
     var recipientsList = document.getElementById("recipients");
 
     // Add an event listener to the add button
-    addButton.addEventListener("click", function () {
+    addButton.addEventListener("click", function() {
         // Add the selected user to the recipients list
         var option = usersSelect.options[usersSelect.selectedIndex];
 
@@ -270,7 +267,7 @@ echo "<ul>{$users}</ul>";
             // Create a remove button
             var removeButton = document.createElement("button");
             removeButton.textContent = "Remove";
-            removeButton.addEventListener("click", function () {
+            removeButton.addEventListener("click", function() {
                 // Remove the recipient from the recipients list
                 recipientsList.removeChild(li);
 
@@ -291,12 +288,9 @@ echo "<ul>{$users}</ul>";
         }
     });
 
-    // Add an event listener to the send button
-    document.getElementById("send-button").addEventListener("click", function (event) {
-        // Check if there are any recipients
+    document.getElementById('send-button').addEventListener('click', function(event) {
         var recipients = document.querySelectorAll("#recipients li");
         if (recipients.length === 0) {
-            // If there are no recipients, display an alert and prevent the form from being submitted
             alert("Please add a user or class before sending the message.");
             event.preventDefault();
         }
@@ -342,16 +336,48 @@ echo "<ul>{$users}</ul>";
     var fileInput = document.getElementById("fileToUpload");
 
     // When the user clicks the upload button, trigger the file input click
-    uploadButton.onclick = function () {
+    uploadButton.onclick = function() {
         fileInput.click();
     }
 
     // When the user selects a file, display the file name
-    fileInput.onchange = function () {
+    fileInput.onchange = function() {
         if (fileInput.files.length > 0) {
             uploadButton.textContent = "Upload File: " + fileInput.files[0].name;
         }
     }
+
+    // Add an event listener to the form
+    document.getElementById('message-form').addEventListener('submit', function(event) {
+        var messageType = document.getElementById('send-button').getAttribute('data-message-type');
+
+        var recipients = document.querySelectorAll("#recipients li");
+        if (recipients.length === 0 && messageType !== 'reply') {
+            alert("Please add a user or class before sending the message.");
+            event.preventDefault();
+        }
+
+        // Prevent the form submission if the message content is empty
+        if (!document.querySelector('#textbox3').value) {
+            alert('Please provide the message content.');
+            event.preventDefault();
+        }
+
+        document.querySelector('#title').value = document.querySelector('#textbox1').value;
+        document.querySelector('#message').value = document.querySelector('#textbox3').value;
+        if (!document.querySelector('#message').value) {
+            alert('Please provide the message content.');
+            event.preventDefault();
+        }
+
+        var selectedClassIds = []; // Replace this with the actual selected class IDs
+        document.getElementById('class_recipients').value = JSON.stringify(selectedClassIds);
+
+        document.getElementById('reply-button').addEventListener('click', function() {
+            document.getElementById('reply-content').value = document.getElementById('textbox3').value;
+            document.getElementById('reply-form').submit();
+        });
+    });
 </script>
 <style>
     .modal {
