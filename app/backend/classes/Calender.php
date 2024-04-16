@@ -16,29 +16,26 @@ class Calender
 
     public static function getAllSubjectsForPersonForADay($date, $userId)
     {
-        $classes = Classes::getAllClassesByUserId($userId);
+        // get all classes for this user
+        $classesQuery = Database::getInstance()->query("
+        SELECT * 
+        FROM class_students 
+        WHERE student_id = ?
+    ", array($userId));
 
-        // get all connected time_modules to this class, with time_module_participating_classes table
-        $timeModules = array();
-        foreach ($classes as $class) {
-            $timeModuleParticipants = Database::getInstance()->get('time_module_participating_classes', array('class', '=', $class->class_id));
-            foreach ($timeModuleParticipants->results() as $timeModuleParticipant) {
-                $timeModuleId = $timeModuleParticipant->time_module;
-                $timeModule = Calender::getTimeModuleById($timeModuleId);
-                if ($timeModule && strtotime($timeModule->start_time) >= strtotime($date) && strtotime($timeModule->end_time) < strtotime($date . ' +1 day')) {
-                    $timeModules[] = $timeModule;
-                }
-            }
-        }
+        $classes = $classesQuery->results();
 
         // get all subjects for this day
         $subjects = array();
-        foreach ($timeModules as $timeModule) {
-            $timeModuleId = $timeModule->time_module_id;
-            $subject = Database::getInstance()->get('time_modules', array('time_module_id', '=', $timeModuleId));
-            if ($subject->count()) {
-                $subjects[] = $subject->first();
-            }
+        foreach ($classes as $class) {
+            $subjectsQuery = Database::getInstance()->query("
+            SELECT tm.* 
+            FROM time_modules tm
+            JOIN time_module_participating_classes tmpc ON tm.time_module_id = tmpc.time_module
+            WHERE tmpc.class = ? AND tm.start_time BETWEEN ? AND ?
+        ", array($class->class_id, $date . ' 00:00:00.000000', $date . ' 23:59:59.000000'));
+
+            $subjects = array_merge($subjects, $subjectsQuery->results());
         }
 
         return $subjects;
@@ -104,5 +101,21 @@ class Calender
         if ($notes->count()) {
             return $notes->results();
         }
+    }
+
+    public static function getParticipatingClasses($time_module_id)
+    {
+        $classes = Database::getInstance()->get('time_module_participating_classes', array('time_module', '=', $time_module_id));
+        // use the class_ids from here to get the actual classes
+        $classIds = $classes->results();
+        $classes = array();
+        foreach ($classIds as $classId) {
+            $class = Database::getInstance()->get('classes', array('class_id', '=', $classId->class));
+            if ($class->count()) {
+                $classes[] = $class->first();
+            }
+        }
+
+        return $classes;
     }
 }
