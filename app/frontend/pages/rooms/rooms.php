@@ -1,12 +1,3 @@
-<style>
-    .room-image {
-        max-height: 200px;
-        width: 100%;
-        object-fit: cover;
-        border-radius: var(--bs-border-radius);
-    }
-</style>
-
 <?php
 $rooms = Rooms::getAllRoomsByUserId($user->data()->user_id);
 ?>

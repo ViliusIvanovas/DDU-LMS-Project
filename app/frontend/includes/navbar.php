@@ -15,6 +15,9 @@
                 <i class="bi bi-folder2-open"></i>
                 <span class="sidebar-item">Expandable Item</span>
               </a>
+              <ul id="submenu1" class="list-unstyled collapse">
+                <li><a href="rooms.php" id="myCoursesLink" class="nav-link link-body-emphasis boldListText">Mine kurser</a></li>
+              </ul>
               <?php
               $rooms = Rooms::getAllRoomsByUserId($user->data()->user_id);
 
@@ -23,15 +26,14 @@
                 foreach ($rooms as $room) {
                   $class = Rooms::getClassByRoomId($room->room_id);
                   echo '<li>';
-                  echo '<a href="room.php?room_id=' . $room->room_id . '" class="nav-link link-body-emphasis">' . $class->name . '</a>';
-
+                  echo '<a href="room.php?room_id=' . $room->room_id . '" data-room-name="' . $room->name . '" class="nav-link link-body-emphasis roomName">' . $room->name . '</a>';
                   // Fetch sections for this room
                   $sections = Rooms::getAllSectionsByRoomId($room->room_id);
 
                   if (count($sections) > 0) {
                     echo '<ul id="subroom' . $room->room_id . '" class="list-unstyled collapse">';
                     foreach ($sections as $section) {
-                      echo '<li><a href="section.php?section_id=' . $section->section_id . '" class="nav-link link-body-emphasis">' . $section->name . '</a></li>';
+                      echo '<li><a href="section.php?section_id=' . $section->section_id . '" class="nav-link link-body-emphasis sectionName">' . $section->name . '</a></li>';
                     }
                     echo '</ul>';
                   }
@@ -41,10 +43,6 @@
                 echo '</ul>';
               }
               ?>
-              <ul id="submenu1" class="list-unstyled collapse">
-                <li><a href="rooms.php" class="nav-link link-body-emphasis">Dine rum</a></li>
-                <li><a href="schedule.php" class="nav-link link-body-emphasis">Skema</a></li>
-              </ul>
             </li>
             <!-- More items here -->
           </ul>
@@ -101,71 +99,157 @@
 
 
       <script>
-        // Function to set the sidebar state in localStorage
-        function setSidebarState(state) {
-          localStorage.setItem('sidebarState', state);
-        }
+    // Function to set the sidebar state in localStorage
+    function setSidebarState(state) {
+        localStorage.setItem('sidebarState', state);
+    }
 
-        // Function to get the sidebar state from localStorage
-        function getSidebarState() {
-          return localStorage.getItem('sidebarState');
-        }
+    // Function to get the sidebar state from localStorage
+    function getSidebarState() {
+        return localStorage.getItem('sidebarState');
+    }
 
-        // Function to set the color mode
-        function setColorMode(mode) {
-          var root = document.documentElement;
-          if (mode === 'dark') {
+    // Function to set the color mode
+    function setColorMode(mode) {
+        var root = document.documentElement;
+        if (mode === 'dark') {
             root.style.setProperty('--sidebar-background', 'var(--sidebar-background-dark)');
-          } else {
+        } else {
             root.style.setProperty('--sidebar-background', 'var(--sidebar-background-light)');
-          }
+        }
+    }
+
+    /* Expandable items */
+
+    // Function to set the expandable item state in localStorage
+    function setExpandableItemState(itemId, state) {
+        localStorage.setItem(itemId, state);
+    }
+
+    // Function to get the expandable item state from localStorage
+    function getExpandableItemState(itemId) {
+        return localStorage.getItem(itemId);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var savedState = getSidebarState();
+
+        // Set the sidebar state
+        if (savedState === 'collapsed') {
+            document.getElementById('sidebar').classList.add('collapsed');
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-          var savedState = getSidebarState();
+        // Set the color mode
+        var preferredColorMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        var savedColorMode = localStorage.getItem('colorMode');
+        setColorMode(savedColorMode || preferredColorMode);
 
-          // Set the sidebar state
-          if (savedState === 'collapsed') {
-            document.getElementById('sidebar').classList.add('collapsed');
-          }
+        // Update the "Mine kurser" link based on the current room or section
+        function updateMineKurserLink() {
+            var selectedRoomName = localStorage.getItem('selectedRoomName');
+            var currentLocation = window.location.pathname;
 
-          // Set the color mode
-          var preferredColorMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-          var savedColorMode = localStorage.getItem('colorMode');
-          setColorMode(savedColorMode || preferredColorMode);
+            // Check if the current location is within a room or section
+            if (selectedRoomName && (currentLocation.includes('room.php') || currentLocation.includes('section.php'))) {
+                document.getElementById('myCoursesLink').textContent = selectedRoomName;
+            } else {
+                // Revert to "Mine kurser" if not in a room or section
+                document.getElementById('myCoursesLink').textContent = 'Mine kurser';
+            }
+        }
 
-          // Add event listener for the collapse button
-          document.getElementById('collapseButton').addEventListener('click', function() {
+        // Call updateMineKurserLink function on page load
+        updateMineKurserLink();
+
+        // Add event listener for the collapse button
+        document.getElementById('collapseButton').addEventListener('click', function() {
             var sidebar = document.getElementById('sidebar');
+            var expandableItems = document.querySelectorAll('.collapse.show'); // Select all expandable items that are currently expanded
             sidebar.classList.toggle('collapsed');
             var newState = sidebar.classList.contains('collapsed') ? 'collapsed' : 'expanded';
             setSidebarState(newState);
-          });
 
-          // Add event listener for the theme buttons
-          document.querySelectorAll('[data-bs-theme-value]').forEach(function(button) {
-            button.addEventListener('click', function() {
-              var theme = this.getAttribute('data-bs-theme-value');
-              setColorMode(theme);
-              localStorage.setItem('colorMode', theme);
-            });
-          });
-
-          // Set sidebar state on initial load
-          setSidebarState(savedState || 'collapsed');
+            // Collapse all expandable items when the sidebar collapses
+            if (newState === 'collapsed') {
+                expandableItems.forEach(function(item) {
+                    item.classList.remove('show');
+                    var itemId = '#' + item.getAttribute('id');
+                    setExpandableItemState(itemId, 'collapsed'); // Update their state in localStorage
+                });
+            }
         });
 
-        // Rooms and subrooms
+        // Add event listener for the theme buttons
+        document.querySelectorAll('[data-bs-theme-value]').forEach(function(button) {
+            button.addEventListener('click', function() {
+                var theme = this.getAttribute('data-bs-theme-value');
+                setColorMode(theme);
+                localStorage.setItem('colorMode', theme);
+            });
+        });
 
-        window.onload = function() {
-          var urlParams = new URLSearchParams(window.location.search);
-          var roomId = urlParams.get('room_id');
-          if (roomId) {
+        // Set sidebar state on initial load
+        setSidebarState(savedState || 'collapsed');
+
+        /* Expandable items */
+
+        document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(item) {
+            item.addEventListener('click', function(event) {
+                // Prevent the default behavior of the link
+                event.preventDefault();
+
+                var itemId = this.getAttribute('href');
+                var currentState = getExpandableItemState(itemId);
+
+                // If the sidebar is collapsed, expand it first before expanding the item
+                if (document.getElementById('sidebar').classList.contains('collapsed')) {
+                    document.getElementById('sidebar').classList.remove('collapsed');
+                    setSidebarState('expanded');
+                }
+
+                // Toggle the expandable item state
+                if (currentState === 'expanded') {
+                    setExpandableItemState(itemId, 'collapsed');
+                } else {
+                    setExpandableItemState(itemId, 'expanded');
+                }
+            });
+        });
+
+        // Set expandable items state on initial load
+        document.querySelectorAll('.collapse').forEach(function(item) {
+            var itemId = '#' + item.getAttribute('id');
+            var savedState = getExpandableItemState(itemId);
+            if (savedState === 'expanded') {
+                item.classList.add('show');
+            }
+        });
+
+        /* Expandable items end */
+
+    });
+
+    // Rooms and subrooms
+
+    window.onload = function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var roomId = urlParams.get('room_id');
+        if (roomId) {
             var subroom = document.getElementById('subroom' + roomId);
             if (subroom) {
-              subroom.classList.add('show');
+                subroom.classList.add('show');
             }
-          }
-        };
-      </script>
+        }
+    };
+
+    // Update the room name when a new room is selected
+    document.querySelectorAll('.roomName').forEach(function(roomLink) {
+        roomLink.addEventListener('click', function() {
+            var roomName = this.textContent;
+            localStorage.setItem('selectedRoomName', roomName);
+            updateMineKurserLink(); // Update the "Mine kurser" link
+        });
+    });
+
+</script>
 </body>

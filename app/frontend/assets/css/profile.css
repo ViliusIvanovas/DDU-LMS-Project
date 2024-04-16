@@ -189,8 +189,8 @@
 }
 
 :root {
-    --sidebar-background-light: linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(252,247,248,1) 56%);
-    --sidebar-background-dark: linear-gradient(to bottom, rgba(28,27,31,1) 42%, rgba(49,49,49,1) 53%, rgba(61,157,217,1) 82%);
+    --sidebar-background-light: linear-gradient(to top, rgba(148, 215, 242, 1) 0%, rgba(252, 247, 248, 1) 56%);
+    --sidebar-background-dark: linear-gradient(to bottom, rgba(28, 27, 31, 1) 42%, rgba(49, 49, 49, 1) 53%, rgba(61, 157, 217, 1) 82%);
 }
 
 #sidebar {
@@ -198,7 +198,7 @@
 }
 
 .sidebar {
-    width: 320px; 
+    width: 320px;
     transition: width 0.3s;
     display: flex;
     flex-direction: column;
@@ -285,9 +285,9 @@ body.dark .background-sidebar {
     width: 50%;
 }
 
-.login-box{
-    padding: 8vh; 
-    padding-left: 9vw; 
+.login-box {
+    padding: 8vh;
+    padding-left: 9vw;
     padding-right: 9vw;
     box-shadow: #39303044 0px 0px 10px 0px;
 }
@@ -298,7 +298,7 @@ body.dark .background-sidebar {
 }
 
 /* ">" gør at stilen kun rammer direkte børn, og ikke subitems */
-#sidebar.collapsed li.mb-2 > a { 
+#sidebar.collapsed li.mb-2>a {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -308,7 +308,28 @@ body.dark .background-sidebar {
 .moreSpacing {
     margin-left: 10px;
 }
+
 /* overruler en bootstrap dropdown ting, der gjorde at et sidebar element ikke var centreret */
 .btn.dropdown-toggle::after {
     transform: translateX(-25%)
+}
+
+.room-image {
+    max-height: 200px;
+    width: 100%;
+    object-fit: cover;
+    border-radius: var(--bs-border-radius);
+}
+
+.boldListText {
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.roomName {
+    margin-left: 10px;
+}
+
+.sectionName {
+    margin-left: 20px;
 }

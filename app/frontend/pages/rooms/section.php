@@ -60,6 +60,8 @@
     }
 </style>
 
+<a href="section.php?section_id=<?php echo $section->section_id; ?>&room_name=<?php echo urlencode($room->name); ?>" class="nav-link link-body-emphasis sectionName"><?php echo $section->name; ?></a>
+
 <?php
 $section_id = $_GET['section_id'];
 $posts = Posts::getAllPostsBySectionId($section_id);
