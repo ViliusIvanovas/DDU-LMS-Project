@@ -15,6 +15,32 @@
                 <i class="bi bi-folder2-open"></i>
                 <span class="sidebar-item">Expandable Item</span>
               </a>
+              <?php
+              $rooms = Rooms::getAllRoomsByUserId($user->data()->user_id);
+
+              if (count($rooms) > 0) {
+                echo '<ul id="submenu1" class="list-unstyled collapse">';
+                foreach ($rooms as $room) {
+                  $class = Rooms::getClassByRoomId($room->room_id);
+                  echo '<li>';
+                  echo '<a href="room.php?room_id=' . $room->room_id . '" class="nav-link link-body-emphasis">' . $class->name . '</a>';
+
+                  // Fetch sections for this room
+                  $sections = Rooms::getAllSectionsByRoomId($room->room_id);
+
+                  if (count($sections) > 0) {
+                    echo '<ul id="subroom' . $room->room_id . '" class="list-unstyled collapse">';
+                    foreach ($sections as $section) {
+                      echo '<li><a href="section.php?section_id=' . $section->section_id . '" class="nav-link link-body-emphasis">' . $section->name . '</a></li>';
+                    }
+                    echo '</ul>';
+                  }
+
+                  echo '</li>';
+                }
+                echo '</ul>';
+              }
+              ?>
               <ul id="submenu1" class="list-unstyled collapse">
                 <li><a href="rooms.php" class="nav-link link-body-emphasis">Dine rum</a></li>
                 <li><a href="schedule.php" class="nav-link link-body-emphasis">Skema</a></li>
@@ -27,8 +53,8 @@
       <div class="sidebar-footer d-flex justify-content-evenly flex-wrap">
         <!-- Account, theme buttons here -->
         <a href="classes.php">
-    <button id="accountButton" class="btn btn-primary d-flex"><i class="bi bi-person"></i></button> <!-- Account icon -->
-</a>
+          <button id="accountButton" class="btn btn-primary d-flex"><i class="bi bi-person"></i></button> <!-- Account icon -->
+        </a>
         <div class="dropup">
           <button class="btn btn-primary py-2 dropdown-toggle d-flex" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
             <svg class="bi my-1 theme-icon-active" class="emIcon">
@@ -87,12 +113,11 @@
 
         // Function to set the color mode
         function setColorMode(mode) {
-          if (mode === 'light') {
-            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(252,247,248,1) 56%);');
-            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(49,49,49,1) 44%, rgba(28,27,31,1) 83%)');
-          } else if (mode === 'dark') {
-            document.documentElement.style.setProperty('--sidebar-background-light', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(49,49,49,1) 44%, rgba(28,27,31,1) 83%)');
-            document.documentElement.style.setProperty('--sidebar-background-dark', 'linear-gradient(to top, rgba(148,215,242,1) 0%, rgba(49,49,49,1) 44%, rgba(28,27,31,1) 83%)'); 
+          var root = document.documentElement;
+          if (mode === 'dark') {
+            root.style.setProperty('--sidebar-background', 'var(--sidebar-background-dark)');
+          } else {
+            root.style.setProperty('--sidebar-background', 'var(--sidebar-background-light)');
           }
         }
 
@@ -129,5 +154,18 @@
           // Set sidebar state on initial load
           setSidebarState(savedState || 'collapsed');
         });
+
+        // Rooms and subrooms
+
+        window.onload = function() {
+          var urlParams = new URLSearchParams(window.location.search);
+          var roomId = urlParams.get('room_id');
+          if (roomId) {
+            var subroom = document.getElementById('subroom' + roomId);
+            if (subroom) {
+              subroom.classList.add('show');
+            }
+          }
+        };
       </script>
 </body>
