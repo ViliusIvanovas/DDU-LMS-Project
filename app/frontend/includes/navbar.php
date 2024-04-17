@@ -50,9 +50,17 @@
       </div>
       <div class="sidebar-footer d-flex justify-content-evenly flex-wrap sidebarPhone">
         <!-- Account, theme buttons here -->
-        <a href="profile.php">
-          <button id="accountButton" class="btn btn-primary d-flex"><i class="bi bi-person"></i></button> <!-- Account icon -->
-        </a>
+        <div class="dropup"> <!-- Dropdown for account -->
+  <button class="btn btn-primary dropdown-toggle" type="button" id="accountButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i class="bi bi-person"></i>
+  </button>
+  <div class="dropdown-menu" aria-labelledby="accountButton">
+  <a class="dropdown-item" href="view_grades.php"><i class="bi bi-star"></i> <span class="moreSpacing">Karakterer</span></a>
+            <a class="dropdown-item" href="profile.php"><i class="bi bi-person-circle"></i> <span class="moreSpacing">Min profil</span></a>
+            <a class="dropdown-item" href="check_abscence.php"><i class="bi bi-x-circle"></i> <span class="moreSpacing">Fravær</span></a>
+            <a class="dropdown-item" href="chat.php"><i class="bi bi-chat-left-dots"></i> <span class="moreSpacing">Samtaler</span></a>
+  </div>
+</div>
         <div class="dropup">
           <button class="btn btn-primary py-2 dropdown-toggle d-flex" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
             <svg class="bi my-1 theme-icon-active" class="emIcon">
