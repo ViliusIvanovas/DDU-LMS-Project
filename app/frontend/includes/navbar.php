@@ -21,7 +21,7 @@
               <?php
               $rooms = Rooms::getAllRoomsByUserId($user->data()->user_id);
 
-              if (count($rooms) > 0) {
+              if (count($rooms) > 0 && $rooms != null) {
                 echo '<ul id="submenu1" class="list-unstyled collapse">';
                 foreach ($rooms as $room) {
                   $class = Rooms::getClassByRoomId($room->room_id);
