@@ -60,7 +60,7 @@
     }
 </style>
 
-<a href="section.php?section_id=<?php echo $section->section_id; ?>&room_name=<?php echo urlencode($room->name); ?>" class="nav-link link-body-emphasis sectionName"><?php echo $section->name; ?></a>
+<a href="section.php?section_id=<?php echo $section->section_id; ?>" class="nav-link link-body-emphasis sectionName"><?php echo $section->name; ?></a>
 
 <?php
 $section_id = $_GET['section_id'];
@@ -134,8 +134,7 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                         </div>
                     </div>
                 <?php
-                }
-                if (Files::fileHasPDF($specific_post->file_id)) {
+                } elseif (Files::fileHasPDF($specific_post->file_id)) {
                 ?>
                     <div class="col-md-2 section-row">
                         <div class="card bg-body-tertiary mb-3 section">
@@ -158,9 +157,31 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                         </div>
                     </div>
                 <?php
-                }
+                } else {
                 ?>
-            <?php }
+                    <div class="col-md-2 section-row">
+                        <div class="card bg-body-tertiary mb-3 section">
+                            <div class="row no-gutters">
+                                <div class="col-md-12">
+                                    <div class="text-field">
+                                        <h5 class="card-title">
+                                            <i class="bi bi-file-earmark-text-fill"></i> <!-- Bootstrap text file icon -->
+                                            <?php echo $specific_post->name; ?>
+                                        </h5>
+                                        <!-- Add a button to download the text file -->
+                                        <div class="text-download-button">
+                                            <a href="download.php?id=<?php echo $specific_post->file_id; ?>">
+                                                <i class="bi bi-arrow-down-circle"></i> <!-- Bootstrap download icon -->
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            <?php
+                }
+            }
             ?>
             <?php
             if ($type->name == 'Grupper') {
@@ -173,7 +194,7 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                                     <h5 class="card-title">
                                         <?php echo $specific_post->name; ?>
                                     </h5>
-                                    <?php 
+                                    <?php
                                     if (Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id)) {
                                         $group = Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id);
                                         $participants = Groups::getGroupsParticipants($group->group_id);
@@ -184,11 +205,11 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                                         echo "<h2>" . $group_real->name . "</h2>";
                                         foreach ($participants as $participant) {
                                             echo "<div>";
-                                            echo "<h3>";
+                                            echo "<h5>";
                                             if (isset($participant->student)) {
                                                 echo User::getFullName($participant->student);
                                             }
-                                            echo "</h3>";
+                                            echo "</h5>";
                                             echo "</div>";
                                         }
                                         echo "</div>";
@@ -204,6 +225,48 @@ $posts = Posts::getAllPostsBySectionId($section_id);
                 </div>
             <?php
             }
+            ?>
+            <?php
+            if ($type->name == 'Aflevering') {
+
+                $assignment = Classes::getAssignmentById($specific_post->assignment_id);
+
+            ?>
+
+                <div class="col-md-2 section-row">
+                    <div class="card bg-body-tertiary mb-3 section">
+                        <div class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="text-field
+                                ">
+                                    <h5 class="card-title
+                                    ">
+                                        <?php echo $specific_post->name; ?>
+                                    </h5>
+                                    <div>
+                                        <h3>
+                                            <?php echo $assignment->name; ?>
+                                        </h3>
+                                        <?php
+                                        if ($specific_post->group) {
+                                            $group = Groups::getGroupById($specific_post->group);
+                                            echo "<h4>" . $group->name . "</h4>";
+                                        } else {
+                                            echo "<h4>Individuel opgave</h4>";
+                                        }
+                                        ?>
+                                        <a href="assignment.php?assignment_id=<?php echo $specific_post->assignment_id; ?>">Se aflevering</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            <?php
+
+            }
+
             ?>
         <?php endforeach; ?>
     </div>

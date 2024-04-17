@@ -151,4 +151,11 @@ class Groups
 
         return $group->first();
     }
+
+    public static function getGroupRoomByGroupId($group_id)
+    {
+        $group = Database::getInstance()->get('`groups`', array('group_id', '=', $group_id));
+
+        return $group->first()->group_room;
+    }
 }

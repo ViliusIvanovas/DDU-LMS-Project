@@ -57,4 +57,10 @@ class Posts
         $post_type = Database::getInstance()->get('post_types', array('post_type_id', '=', $type));
         return $post_type->first();
     }
+
+    public static function getNoteByNoteId($note_id)
+    {
+        $note = Database::getInstance()->get('notes', array('note_id', '=', $note_id));
+        return $note->first();
+    }
 }
