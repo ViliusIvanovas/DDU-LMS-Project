@@ -193,4 +193,17 @@ class Classes
 
         return $data->first();
     }
+    public static function getAllTimeModuleByClass($class_id, $date)
+    {
+        $db = Database::getInstance();
+
+        $data = $db->query("
+        SELECT tmp.*, tm.start_time, tm.end_time
+        FROM time_module_participating_classes tmp
+        JOIN time_modules tm ON tmp.time_module = tm.time_module_id
+        WHERE tmp.class = ? AND DATE(tm.start_time) = ?
+    ", array($class_id, $date))->results();
+
+        return $data;
+    }
 }
