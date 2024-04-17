@@ -6,28 +6,29 @@
 
     .time-table {
         width: 100%;
-        table-layout: fixed;
         box-sizing: border-box;
     }
 
     .timeline {
-        width: 10%;
-        box-sizing: border-box;
+        background-image: linear-gradient(to bottom, #5FB6D9 1px, transparent 1px);
+        background-size: 100% 8vh;
+        background-repeat: repeat-y;
     }
 
     .timeline p {
-        writing-mode: vertical-rl;
-        text-align: center;
-        transform: rotate(180deg);
-        border-bottom: 1px solid #e9ecef;
-        height: 10%;
+        display: flex;
+        align-items: center;
+        height: 8vh;
         box-sizing: border-box;
+        margin: 0;
     }
 
     .day {
-        width: 22%;
         position: relative;
         box-sizing: border-box;
+        background-image: linear-gradient(to bottom, #5FB6D9 1px, transparent 1px);
+        background-size: 100% 8vh;
+        background-repeat: repeat-y;
     }
 
     .subject {
@@ -69,6 +70,7 @@
     a.no-decoration {
         text-decoration: none;
     }
+
 </style>
 
 <div class="container my-5">
@@ -108,7 +110,7 @@
 
                             <?php
                             for ($i = 0; $i < 5; $i++) {
-                                ?>
+                            ?>
 
                                 <td class="day">
                                     <?php
@@ -129,10 +131,9 @@
                                         if (is_array($noteAvailable) && isset($noteAvailable[0]->text)) {
                                             $noteText = $noteAvailable[0]->text;
                                         }
-                                        ?>
+                                    ?>
 
-                                        <div class="subject <?php echo $noteText ? 'subject-note-available' : 'bg-body'; ?>"
-                                            title="<?php echo htmlspecialchars($noteText); ?>">
+                                        <div class="subject <?php echo $noteText ? 'subject-note-available' : 'bg-body'; ?>" title="<?php echo htmlspecialchars($noteText); ?>">
                                             <p><?php echo date('H:i', strtotime($subject->start_time)) . ' - ' . date('H:i', strtotime($subject->end_time)); ?>
                                             </p>
                                             <h4><?php echo $subject->name; ?></h4>
@@ -160,6 +161,7 @@
                                             </p>
 
                                             <?php
+                                            /*
                                             $classes = Calender::getParticipatingClasses($subject->time_module_id);
                                             $classNames = array();
                                             if ($classes !== null) {
@@ -167,18 +169,19 @@
                                                     $classNames[] = Classes::getClassById($class->class_id)->name;
                                                 }
                                             }
+                                            */
                                             ?>
 
                                             <p><?php echo !empty($classNames) ? implode(', ', $classNames) : 'Ikke angivet'; ?>
                                             </p>
                                         </div>
 
-                                        <?php
+                                    <?php
                                     }
                                     ?>
                                 </td>
 
-                                <?php
+                            <?php
                             }
                             ?>
                         </tr>
@@ -216,7 +219,7 @@
                     $timeRemaining = 'Time remaining: ' . gmdate('H:i:s', $secondsRemaining);
                 }
 
-                ?>
+            ?>
                 <a href="assignment.php?assignment_id=<?php echo $assignment->assignment_id ?>" class="no-decoration">
                     <div class="card mb-3">
                         <div class="card-body">
@@ -237,7 +240,7 @@
                     </div>
                 </a>
 
-                <?php
+            <?php
             }
             ?>
         </div>
@@ -247,25 +250,26 @@
     <br>
 
     <script>
-    window.onload = function () {
-        var subjects = document.querySelectorAll('.subject');
-        var timelineHeight = document.querySelector('.timeline').offsetHeight * 0.6; // Adjusted to 60% of the viewport height
-        var scheduleMinutes = 420; // Total minutes from 08:00 to 15:00
+        window.onload = function() {
+            var subjects = document.querySelectorAll('.subject');
+            var timelineHeight = document.querySelector('.timeline').offsetHeight;
+            var scheduleMinutes = 540; // Total minutes from 08:00 to 17:00
+            var vhPerHour = 8; // 8vh is equivalent to 1 hour
+            var vhPerMinute = vhPerHour / 60; // Calculate the vh equivalent of 1 minute
 
-        subjects.forEach(function (subject) {
-            var timeText = subject.querySelector('p').textContent;
-            var times = timeText.split(' - ');
-            var startTime = times[0];
-            var endTime = times[1];
+            subjects.forEach(function(subject) {
+                var timeText = subject.querySelector('p').textContent;
+                var times = timeText.split(' - ');
+                var startTime = times[0];
+                var endTime = times[1];
 
-            var startDate = new Date("1970-01-01T" + startTime + ":00");
-            var endDate = new Date("1970-01-01T" + endTime + ":00");
+                var startDate = new Date("1970-01-01T" + startTime + ":00");
+                var endDate = new Date("1970-01-01T" + endTime + ":00");
 
-            var duration = (endDate - startDate) / 60000; // Duration in minutes
-            var startMinutes = (startDate.getHours() * 60) + startDate.getMinutes() - 480; // Minutes from 08:00
+                var startMinutes = (startDate.getHours() * 60) + startDate.getMinutes() - 480; // Minutes from 08:00
 
-            subject.style.height = (duration / scheduleMinutes * timelineHeight) + 'px';
-            subject.style.top = (startMinutes / scheduleMinutes * timelineHeight) + 'px';
-        });
-    };
-</script>
+                subject.style.height = vhPerHour + 'vh'; // Set height to 8vh as all subjects are 1 hour long
+                subject.style.top = (startMinutes * vhPerMinute) + 'vh'; // Convert startMinutes to vh
+            });
+        };
+    </script>
