@@ -39,32 +39,50 @@ $Parsedown = new Parsedown();
                     echo "</h5>";
                     echo "</div>";
                 }
-                ?>
-                <?php 
+            ?>
+                <?php
                 $post = Classes::getPostLinkedToAssignment($assignment_id);
                 $section_id = $post->section_id;
 
                 ?>
 
                 <a href="groups.php?group_room_id=<?php echo Groups::getGroupRoomByGroupId($assignment->group); ?>&section_id=<?php echo $section_id ?>">Rediger grupper</a>
-                <?php
+            <?php
                 echo "</div>";
             }
             ?>
 
-            <form action="upload.php" method="post" enctype="multipart/form-data">
-                <label for="file">Upload file:</label>
-                <input type="file" id="file" name="file">
-                <input type="hidden" name="assignment_id" value="<?php echo $assignment_id; ?>">
-                <input type="submit" value="Upload">
-            </form>
+            <?php
+            if (User::isUserTeacherForClass($user->data()->user_id, $assignment->class)) {
+                $submissions = Classes::getSubmissionsByAssignmentId($assignment_id);
 
-            <form action="comment.php" method="post">
-                <label for="comment">Note:</label>
-                <textarea id="comment" name="comment"></textarea>
-                <input type="hidden" name="assignment_id" value="<?php echo $assignment_id; ?>">
-                <input type="submit" value="Submit Comment">
-            </form>
+                $students = Classes::getAllStudents($assignment->class);
+
+                echo '<p>Afleveret: ' . count($submissions) . " ud af " . count($students) . '</p>';
+                ?>
+
+                <a href="assignment-responses.php?assignment_id=<?php echo $assignment_id ?>">Gennemse afleveringer</a>
+
+                <?php 
+            } else {
+                $submission = Classes::getSubmissionByUserIdAndAssignmentId($user->data()->user_id, $assignment_id);
+            ?>
+
+                <?php if ($submission !== null) { ?>
+                    <p>You have submitted this assignment. <a href="retract_submission.php?submission_id=<?php echo $submission->id; ?>">Click here to retract it.</a></p>
+                <?php } else { ?>
+                    <form action="upload.php" method="post" enctype="multipart/form-data">
+                        Select file to submit:
+                        <input type="file" name="fileToUpload" id="fileToUpload" onchange="displayFileType(event)">
+                        <input type="hidden" name="return_page" value="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+                        <input type="hidden" name="user_id" value="<?php echo $user->data()->user_id; ?>">
+                        <input type="hidden" name="assignment_id" value="<?php echo $assignment_id; ?>">
+                        <input type="submit" value="Submit Assignment" name="submit">
+                    </form>
+                    <p id="fileTypeDisplay"></p>
+                <?php } ?>
+
+            <?php } ?>
         </div>
     </div>
 </div>

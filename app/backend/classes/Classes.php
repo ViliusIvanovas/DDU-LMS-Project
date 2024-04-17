@@ -55,7 +55,7 @@ class Classes
 
         // Check if the user is in any classes
         if (empty($classIds)) {
-            throw new Exception('No classes found for this user');
+            return null; // Return null if no classes are found
         }
 
         // Get class details
@@ -166,5 +166,31 @@ class Classes
             return $assignment->first();
         }
         throw new Exception("Assignment not found for assignment ID: $assignmentId");
+    }
+
+    public static function getSubmissionsByAssignmentId($assignment_id)
+    {
+        $db = Database::getInstance();
+
+        $data = $db->get('assignment_submissions', array('assignment', '=', $assignment_id));
+
+        if (!$data->count()) {
+            return array(); // Return an empty array if no submissions are found
+        }
+
+        return $data->results();
+    }
+
+    public static function getSubmissionByUserIdAndAssignmentId($user_id, $assignment_id)
+    {
+        $db = Database::getInstance();
+
+        $data = $db->get('submissions', array('user_id', '=', $user_id, 'AND', 'assignment_id', '=', $assignment_id));
+
+        if ($data === false || !$data->count()) {
+            return null; // Return null if no submission is found or if a database error occurs
+        }
+
+        return $data->first();
     }
 }
