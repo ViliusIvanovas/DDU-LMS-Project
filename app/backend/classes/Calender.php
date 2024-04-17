@@ -16,24 +16,45 @@ class Calender
 
     public static function getAllSubjectsForPersonForADay($date, $userId)
     {
-        // get all classes for this user
+        // get all classes for this user as a student
         $classesQuery = Database::getInstance()->query("
-        SELECT * 
-        FROM class_students 
-        WHERE student_id = ?
-    ", array($userId));
+    SELECT * 
+    FROM class_students 
+    WHERE student_id = ?
+", array($userId));
 
-        $classes = $classesQuery->results();
+        $studentClasses = $classesQuery->results();
+
+        // get all classes for this user as a teacher
+        $teacherClassesQuery = Database::getInstance()->query("
+    SELECT tmpc.* 
+    FROM time_module_teachers tmt
+    JOIN time_module_participating_classes tmpc ON tmt.time_module = tmpc.time_module
+    WHERE tmt.teacher = ?
+", array($userId));
+
+        $teacherClasses = $teacherClassesQuery->results();
 
         // get all subjects for this day
         $subjects = array();
-        foreach ($classes as $class) {
+        foreach ($studentClasses as $class) {
             $subjectsQuery = Database::getInstance()->query("
-            SELECT tm.* 
-            FROM time_modules tm
-            JOIN time_module_participating_classes tmpc ON tm.time_module_id = tmpc.time_module
-            WHERE tmpc.class = ? AND tm.start_time BETWEEN ? AND ?
-        ", array($class->class_id, $date . ' 00:00:00.000000', $date . ' 23:59:59.000000'));
+        SELECT tm.* 
+        FROM time_modules tm
+        JOIN time_module_participating_classes tmpc ON tm.time_module_id = tmpc.time_module
+        WHERE tmpc.class = ? AND tm.start_time BETWEEN ? AND ?
+    ", array($class->class_id, $date . ' 00:00:00.000000', $date . ' 23:59:59.000000'));
+
+            $subjects = array_merge($subjects, $subjectsQuery->results());
+        }
+
+        foreach ($teacherClasses as $class) {
+            $subjectsQuery = Database::getInstance()->query("
+        SELECT tm.* 
+        FROM time_modules tm
+        JOIN time_module_participating_classes tmpc ON tm.time_module_id = tmpc.time_module
+        WHERE tmpc.time_module = ? AND tm.start_time BETWEEN ? AND ?
+    ", array($class->time_module, $date . ' 00:00:00.000000', $date . ' 23:59:59.000000'));
 
             $subjects = array_merge($subjects, $subjectsQuery->results());
         }
