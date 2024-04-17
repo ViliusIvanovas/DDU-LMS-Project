@@ -1,21 +1,18 @@
 <style>
     .schedule-box {
-        height: 500px;
+        height: 60vh;
         box-sizing: border-box;
-        /* Added */
     }
 
     .time-table {
         width: 100%;
         table-layout: fixed;
         box-sizing: border-box;
-        /* Added */
     }
 
     .timeline {
         width: 10%;
         box-sizing: border-box;
-        /* Added */
     }
 
     .timeline p {
@@ -25,14 +22,12 @@
         border-bottom: 1px solid #e9ecef;
         height: 10%;
         box-sizing: border-box;
-        /* Added */
     }
 
     .day {
         width: 22%;
         position: relative;
         box-sizing: border-box;
-        /* Added */
     }
 
     .subject {
@@ -48,13 +43,12 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         box-sizing: border-box;
-        /* Added */
+        max-height: 50px;
     }
 
     .subject p {
         margin-bottom: 0.1em;
         box-sizing: border-box;
-        /* Added */
     }
 
     .subject-note-available {
@@ -65,14 +59,12 @@
     .subject h4 {
         font-size: 1.2em;
         box-sizing: border-box;
-        /* Added */
     }
 
     .scrollable-table {
-        height: 500px;
+        height: 59vh;
         overflow: auto;
         box-sizing: border-box;
-        /* Added */
     }
 
     a.no-decoration {
@@ -256,25 +248,25 @@
     <br>
 
     <script>
-        window.onload = function () {
-            var subjects = document.querySelectorAll('.subject');
-            var timelineHeight = document.querySelector('.timeline').offsetHeight;
-            var scheduleMinutes = 540; // Total minutes from 08:00 to 17:00
+    window.onload = function () {
+        var subjects = document.querySelectorAll('.subject');
+        var timelineHeight = document.querySelector('.timeline').offsetHeight * 0.6; // Adjusted to 60% of the viewport height
+        var scheduleMinutes = 420; // Total minutes from 08:00 to 15:00
 
-            subjects.forEach(function (subject) {
-                var timeText = subject.querySelector('p').textContent;
-                var times = timeText.split(' - ');
-                var startTime = times[0];
-                var endTime = times[1];
+        subjects.forEach(function (subject) {
+            var timeText = subject.querySelector('p').textContent;
+            var times = timeText.split(' - ');
+            var startTime = times[0];
+            var endTime = times[1];
 
-                var startDate = new Date("1970-01-01T" + startTime + ":00");
-                var endDate = new Date("1970-01-01T" + endTime + ":00");
+            var startDate = new Date("1970-01-01T" + startTime + ":00");
+            var endDate = new Date("1970-01-01T" + endTime + ":00");
 
-                var duration = (endDate - startDate) / 60000; // Duration in minutes
-                var startMinutes = (startDate.getHours() * 60) + startDate.getMinutes() - 480; // Minutes from 08:00
+            var duration = (endDate - startDate) / 60000; // Duration in minutes
+            var startMinutes = (startDate.getHours() * 60) + startDate.getMinutes() - 480; // Minutes from 08:00
 
-                subject.style.height = (duration / scheduleMinutes * timelineHeight) + 'px';
-                subject.style.top = (startMinutes / scheduleMinutes * timelineHeight) + 'px';
-            });
-        };
-    </script>
+            subject.style.height = (duration / scheduleMinutes * timelineHeight) + 'px';
+            subject.style.top = (startMinutes / scheduleMinutes * timelineHeight) + 'px';
+        });
+    };
+</script>

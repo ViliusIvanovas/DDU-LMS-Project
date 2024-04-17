@@ -13,10 +13,10 @@
             <li class="mb-2">
               <a href="#submenu1" data-bs-toggle="collapse" class="nav-link link-body-emphasis">
                 <i class="bi bi-folder2-open"></i>
-                <span class="sidebar-item">Expandable Item</span>
+                <span class="sidebar-item">Mine kurser</span>
               </a>
               <ul id="submenu1" class="list-unstyled collapse">
-                <li><a href="rooms.php" id="myCoursesLink" class="nav-link link-body-emphasis boldListText">Mine kurser</a></li>
+                <li><a href="rooms.php" id="myCoursesLink" class="nav-link link-body-emphasis boldListText"></a></li> <!-- Keeps code working -->
               </ul>
               <?php
               $rooms = Rooms::getAllRoomsByUserId($user->data()->user_id);
@@ -48,7 +48,7 @@
           </ul>
         </div>
       </div>
-      <div class="sidebar-footer d-flex justify-content-evenly flex-wrap">
+      <div class="sidebar-footer d-flex justify-content-evenly flex-wrap sidebarPhone">
         <!-- Account, theme buttons here -->
         <a href="profile.php">
           <button id="accountButton" class="btn btn-primary d-flex"><i class="bi bi-person"></i></button> <!-- Account icon -->
@@ -79,6 +79,7 @@
                 </svg>
               </button>
             </li>
+            <!--
             <li>
               <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
                 <i class="bi bi-circle-half" class="emIcon"></i>
@@ -88,6 +89,7 @@
                 </svg>
               </button>
             </li>
+            -->
           </ul>
         </div>
         <!-- Popout button here -->
@@ -151,12 +153,24 @@
 
             // Check if the current location is within a room or section
             if (selectedRoomName && (currentLocation.includes('room.php') || currentLocation.includes('section.php'))) {
-              document.getElementById('myCoursesLink').textContent = selectedRoomName;
+              // Set the room name to be bold
+              var roomLinks = document.querySelectorAll('.roomName');
+              roomLinks.forEach(function(link) {
+                if (link.textContent === selectedRoomName) {
+                  link.style.fontWeight = 'bold';
+                } else {
+                  link.style.fontWeight = 'normal';
+                }
+              });
+
+              // Update the "Mine kurser" link
+              document.getElementById('myCoursesLink').textContent = '';
             } else {
-              // Revert to "Mine kurser" if not in a room or section
-              document.getElementById('myCoursesLink').textContent = 'Mine kurser';
+              // Revert to "empty" if not in a room or section
+              document.getElementById('myCoursesLink').textContent = '';
             }
           }
+
 
           // Call updateMineKurserLink function on page load
           updateMineKurserLink();
@@ -250,53 +264,53 @@
             updateMineKurserLink(); // Update the "Mine kurser" link
           });
         });
-       // Rooms and subrooms
+        // Rooms and subrooms
 
-// Function to set the room state in sessionStorage
-function setRoomState(roomId, state) {
-  sessionStorage.setItem(roomId, state);
-}
+        // Function to set the room state in sessionStorage
+        function setRoomState(roomId, state) {
+          sessionStorage.setItem(roomId, state);
+        }
 
-// Function to get the room state from sessionStorage
-function getRoomState(roomId) {
-  return sessionStorage.getItem(roomId);
-}
+        // Function to get the room state from sessionStorage
+        function getRoomState(roomId) {
+          return sessionStorage.getItem(roomId);
+        }
 
-// Set room state on initial load
-document.querySelectorAll('.roomName').forEach(function(item) {
-  var roomId = item.getAttribute('href').split('=')[1];
-  var savedState = getRoomState(roomId);
-  if (savedState === 'expanded') {
-    document.querySelector('#subroom' + roomId).classList.add('show');
-  }
-});
+        // Set room state on initial load
+        document.querySelectorAll('.roomName').forEach(function(item) {
+          var roomId = item.getAttribute('href').split('=')[1];
+          var savedState = getRoomState(roomId);
+          if (savedState === 'expanded') {
+            document.querySelector('#subroom' + roomId).classList.add('show');
+          }
+        });
 
-// Add event listener for the room links
-document.querySelectorAll('.roomName').forEach(function(item) {
-  item.addEventListener('click', function() {
-    var roomId = this.getAttribute('href').split('=')[1];
-    var currentState = getRoomState(roomId);
+        // Add event listener for the room links
+        document.querySelectorAll('.roomName').forEach(function(item) {
+          item.addEventListener('click', function() {
+            var roomId = this.getAttribute('href').split('=')[1];
+            var currentState = getRoomState(roomId);
 
-    // Toggle the room state
-    if (currentState === 'expanded') {
-      setRoomState(roomId, 'collapsed');
-    } else {
-      setRoomState(roomId, 'expanded');
-    }
-  });
-});
+            // Toggle the room state
+            if (currentState === 'expanded') {
+              setRoomState(roomId, 'collapsed');
+            } else {
+              setRoomState(roomId, 'expanded');
+            }
+          });
+        });
 
-// On page load, check if the URL has a room_id parameter and if so, expand that room
-document.addEventListener('DOMContentLoaded', function() {
-  var urlParams = new URLSearchParams(window.location.search);
-  var roomId = urlParams.get('room_id');
-  if (roomId) {
-    var room = document.querySelector('#subroom' + roomId);
-    if (room) {
-      room.classList.add('show');
-      setRoomState(roomId, 'expanded');
-    }
-  }
-});
+        // On page load, check if the URL has a room_id parameter and if so, expand that room
+        document.addEventListener('DOMContentLoaded', function() {
+          var urlParams = new URLSearchParams(window.location.search);
+          var roomId = urlParams.get('room_id');
+          if (roomId) {
+            var room = document.querySelector('#subroom' + roomId);
+            if (room) {
+              room.classList.add('show');
+              setRoomState(roomId, 'expanded');
+            }
+          }
+        });
       </script>
 </body>

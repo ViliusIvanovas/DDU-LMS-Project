@@ -333,3 +333,9 @@ body.dark .background-sidebar {
 .sectionName {
     margin-left: 20px;
 }
+
+@media screen and (max-width: 600px) {
+    .sidebarPhone {
+        margin-bottom: 80px;
+    }
+}
