@@ -203,8 +203,9 @@ $is_teacher = User::isUserTeacherForClass($user->data()->user_id, $class->class_
                                             <h5 class="card-title">
                                                 <?php echo $specific_post->name; ?>
                                             </h5>
-                                            <?php if (!$is_teacher && $user->data()->role == 'student' && Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id)) :
-                                                $group = Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id);
+                                            <?php if (!$is_teacher && Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id)) :
+                                                $group_id = Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id);
+                                                $group = Groups::getGroupById($group_id->group_id);
                                                 $participants = Groups::getGroupsParticipants($group->group_id);
                                             ?>
                                                 <div class='bg-body-tertiary p-3 my-3'>
