@@ -3,7 +3,7 @@ $room_id = $_GET['room_id'];
 $class = Rooms::getClassByRoomId($room_id);
 $user_id = $user->data()->user_id;
 $is_teacher = User::isUserTeacherForClass($user_id, $class->class_id);
-if(!$is_teacher)  :
+if (!$is_teacher) :
     Redirect::to('index.php');
 endif;
 
@@ -13,8 +13,22 @@ $students = Classes::getAllStudents($class->class_id);
 <div class="container">
     <h1>Giv karakter</h1>
     <form method="POST" action="submit_grades.php">
+        <?php
+        // Get the current month
+        $currentMonth = date('n');
+
+        // Set the years for the December, March, and May dates based on the current month
+        $decYear = $currentMonth >= 8 ? 2024 : 2023;
+        $marMayYear = $decYear + 1;
+        ?>
+
         <label for="release_time">Vælg frigivelsestidspunkt:</label>
-        <input type="datetime-local" id="release_time" name="release_time" required>
+        <select id="release_time" name="release_time" required>
+            <option value="">Vælg...</option>
+            <option value="<?php echo date('Y-m-d', strtotime('first friday of December ' . $decYear)); ?>">December <?php echo $decYear; ?></option>
+            <option value="<?php echo date('Y-m-d', strtotime('first friday of March ' . $marMayYear)); ?>">Marts <?php echo $marMayYear; ?></option>
+            <option value="<?php echo date('Y-m-d', strtotime('first friday of May ' . $marMayYear)); ?>">Maj <?php echo $marMayYear; ?></option>
+        </select>
         <p id="error" style="color: red; display: none;">Vælg venligst en dato og tid.</p>
         <input type="hidden" name="room_id" value="<?php echo $room_id; ?>">
         <div class="row">
