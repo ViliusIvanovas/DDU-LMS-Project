@@ -43,7 +43,6 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         box-sizing: border-box;
-        max-height: 50px;
     }
 
     .subject p {
