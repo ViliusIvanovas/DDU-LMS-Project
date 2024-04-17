@@ -70,6 +70,18 @@
     a.no-decoration {
         text-decoration: none;
     }
+
+    td.day {
+        position: relative;
+        /* Other styles... */
+    }
+
+    .dropdown {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 2;
+    }
 </style>
 
 <div class="container my-5">
@@ -150,11 +162,28 @@
                                     });
 
                                     foreach ($subjects as $subject) {
+                                        $day = date('Y-m-d', strtotime($subject->start_time));
+                                        $class_id = Classes::getClassById($class->class_id)->class_id;
                                         $noteAvailable = Calender::getTimeModuleNotes($subject->time_module_id);
                                         $noteText = '';
                                         if (is_array($noteAvailable) && isset($noteAvailable[0]->text)) {
                                             $noteText = $noteAvailable[0]->text;
                                         }
+
+                                        // Add a dropdown menu for each subject
+                                        echo "<div class='dropdown'>";
+                                        echo "<select id='subject_" . $subject->time_module_id . "' class='subject_dropdown' name='subject_" . $subject->time_module_id . "' style='width: 40px;' onchange='handleSelectChange(this)' data-day='" . $day . "' data-class-id='" . $class_id . "'>";
+                                        echo "<option value='' style='display: none;'>'''</option>";
+                                        echo "<option value='start'>Start fraværsårsag herfra</option>";
+                                        echo "<option value='statistics'>Fraværsstatistik</option>";
+
+                                        // If the current user is a teacher, add a "Register Absence" option
+                                        if ($user->data()->access_level == '2') {
+                                            echo "<option value='absence'>Registrer fravær</option>";
+                                        }
+
+                                        echo "</select>";
+                                        echo "</div>";
                                         ?>
 
                                         <div class="subject <?php echo $noteText ? 'subject-note-available' : 'bg-body'; ?>"
@@ -202,6 +231,7 @@
                                         </div>
 
                                         <?php
+                                        echo "</div>";
                                     }
                                     ?>
                                 </td>
@@ -297,4 +327,42 @@
                 subject.style.top = (startMinutes * vhPerMinute) + 'vh'; // Convert startMinutes to vh
             });
         };
+
+        function handleSelectChange(dropdown) {
+            // Get the selected option
+            var selectedOption = dropdown.options[dropdown.selectedIndex].value;
+
+            // Check if the selected option is "Registrer fravær"
+            if (selectedOption === 'absence') {
+                // Get the day and class_id
+                var day = dropdown.getAttribute('data-day');
+                var class_id = dropdown.getAttribute('data-class-id');
+
+                // Send the data
+                sendData(selectedOption, day, class_id);
+            }
+        }
+
+        function sendData(option, day, class_id) {
+            // Create a FormData object
+            var formData = new FormData();
+            formData.append('option', option);
+            formData.append('day', day);
+            formData.append('class_id', class_id);
+
+            // Send the data to check_absence.php
+            fetch('check_abscence.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // If the request was successful, redirect to check_absence.php
+                        window.location.href = 'check_abscence.php';
+                    } else {
+                        console.error('Error:', response.statusText);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
     </script>

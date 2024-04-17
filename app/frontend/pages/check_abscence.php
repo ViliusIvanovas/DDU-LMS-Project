@@ -1,4 +1,19 @@
 <?php
+if (!isset($_POST['Day']) || !isset($_POST['classID'])) {
+    die('Day or class ID not set in the POST request.');
+}
+
+// Check if day and class_id are set in the POST request
+if (isset($_POST['day']) && isset($_POST['class_id'])) {
+    // Get the day and class_id from the POST request
+    $day = $_POST['day'];
+    $class_id = $_POST['class_id'];
+} else {
+    // Handle the case where day or class_id are not set in the POST request
+    echo "Day or class ID not set in the POST request.";
+    exit;
+}
+var_dump($_POST);
 // Specify the class ID
 $class_id = '2'; // Replace this with the actual class ID
 
@@ -68,10 +83,13 @@ foreach ($students as $student) {
     foreach ($time_modules as $time_module) {
         echo "<td>";
         echo "<input type='checkbox' class='time_module_" . $time_module->time_module . "' name='absent_students_time_module_" . $time_module->time_module . "[]' value='" . $student->user_id . "'>"; // Replace 'user_id' with the actual property for the student's ID
-        echo "<select name='attendance_time_module_" . $time_module->time_module . "_" . $student->user_id . "'><option value='present'>Tilstede</option><option value='absent'>Fraværende</option></select>"; // Replace 'user_id' with the actual property for the student's ID
+        echo "<select name='attendance_time_module_" . $time_module->time_module . "_" . $student->user_id . "'>";
+        echo "<option value='' selected>'''</option>";
+        echo "<option value='present'>Tilstede</option>";
+        echo "<option value='absent'>Fraværende</option>";
+        echo "</select>"; // Replace 'user_id' with the actual property for the student's ID
         echo "</td>";
     }
-
     echo "</tr>";
 }
 echo "</table>";
@@ -112,6 +130,20 @@ echo "</table>";
         });
     });
 
+    // When a dropdown option is selected
+    document.querySelectorAll('select').forEach(function (dropdown) {
+        dropdown.addEventListener('change', function () {
+            // Check the selected option
+            var selectedOption = this.options[this.selectedIndex].value;
+            if (selectedOption === 'present' || selectedOption === 'absent') {
+                // Make the dropdown wider when an option is selected
+                this.style.width = '150px';
+            } else {
+                // Make the dropdown narrower when other options are selected
+                this.style.width = '40px';
+            }
+        });
+    });
 </script>
 
 <style>
@@ -120,39 +152,7 @@ echo "</table>";
         padding: 10px;
     }
 
-    .dropdown_wrapper {
-        position: relative;
-        display: inline-block;
-    }
-
-    .attendance_dropdown {
-        appearance: none;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background: transparent;
-        width: 30px;
-        overflow: hidden;
-        border: none;
-        outline: none;
-        color: transparent;
-        /* Hide the text */
-        text-shadow: 0 0 0 #000;
-        /* Provide a shadow in a color users can see */
-    }
-
-    .dropdown_wrapper::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 15px;
-        height: 100%;
-        background: url('dropdown_arrow.png') no-repeat center;
-        pointer-events: none;
-    }
-
-    .attendance_dropdown option {
-        color: #000;
-        /* Make the text visible again when the dropdown is open */
+    select {
+        width: 40px;
     }
 </style>
