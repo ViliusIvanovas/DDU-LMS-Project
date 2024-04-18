@@ -11,12 +11,15 @@
               </a>
             </li>
             <li class="mb-2">
-              <a href="#submenu1" data-bs-toggle="collapse" class="nav-link link-body-emphasis">
+              <a href="#submenu1" data-bs-toggle="collapse" class="nav-link link-body-emphasis" style="display: flex; align-items: center;">
                 <i class="bi bi-folder2-open"></i>
-                <span class="sidebar-item">Mine kurser</span>
+                <span class="sidebar-item moreSpacing">Mine kurser</span>
               </a>
               <ul id="submenu1" class="list-unstyled collapse">
                 <li><a href="rooms.php" id="myCoursesLink" class="nav-link link-body-emphasis boldListText"></a></li> <!-- Keeps code working -->
+              </ul>
+              <ul id="submenu1" class="list-unstyled collapse">
+                <li><a href="rooms.php" class="nav-link link-body-emphasis boldListText">Alle Rum</a></li> <!-- All Rooms link -->
               </ul>
               <?php
               $rooms = Rooms::getAllRoomsByUserId($user->data()->user_id);
@@ -51,16 +54,18 @@
       <div class="sidebar-footer d-flex justify-content-evenly flex-wrap sidebarPhone">
         <!-- Account, theme buttons here -->
         <div class="dropup"> <!-- Dropdown for account -->
-  <button class="btn btn-primary dropdown-toggle" type="button" id="accountButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    <i class="bi bi-person"></i>
-  </button>
-  <div class="dropdown-menu" aria-labelledby="accountButton">
-  <a class="dropdown-item" href="view_grades.php"><i class="bi bi-star"></i> <span class="moreSpacing">Karakterer</span></a>
+          <button class="btn btn-primary dropdown-toggle" type="button" id="accountButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="bi bi-person"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="accountButton">
+            <a class="dropdown-item" href="view_grades.php"><i class="bi bi-star"></i> <span class="moreSpacing">Karakterer</span></a>
             <a class="dropdown-item" href="profile.php"><i class="bi bi-person-circle"></i> <span class="moreSpacing">Min profil</span></a>
             <a class="dropdown-item" href="check_abscence.php"><i class="bi bi-x-circle"></i> <span class="moreSpacing">Fravær</span></a>
             <a class="dropdown-item" href="chat.php"><i class="bi bi-chat-left-dots"></i> <span class="moreSpacing">Samtaler</span></a>
-  </div>
-</div>
+            <a class="dropdown-item" href="classes.php"><i class="bi bi-people"></i> <span class="moreSpacing">Mine klasser</span></a>
+            <a class="dropdown-item" href="logout.php"><i class="bi bi-x-square leaveText"></i> <span class="moreSpacing leaveText">Log af</span></a>
+          </div>
+        </div>
         <div class="dropup">
           <button class="btn btn-primary py-2 dropdown-toggle d-flex" id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
             <svg class="bi my-1 theme-icon-active" class="emIcon">
