@@ -138,6 +138,11 @@
         document.querySelector('#reply-button').addEventListener('click', () => {
             document.querySelector('#reply-form').submit();
         });
+
+        stackedit.on('close', function() {
+            var responseButton = document.querySelector('#response-button');
+            responseButton.innerHTML = 'Rediger besked';
+        });
     }
 </script>
 
@@ -188,7 +193,7 @@ foreach ($classes as $class) {
         <button type="button" id="add-button">Tilføj modtager</button>
         <ul id="recipients"></ul>
         <input type="hidden" id="textbox3" name="message">
-        <button type="button" id="message-button">Rediger besked</button>
+        <button type="button" id="message-button">Skriv besked</button>
         <form id="message-form" action="send_message.php" method="post">
             <input type="hidden" id="title" name="title">
             <input type="hidden" id="message" name="message">
@@ -307,6 +312,10 @@ foreach ($classes as $class) {
             }
         });
 
+        stackedit.on('close', function() {
+            var responseButton = document.querySelector('#message-button');
+            responseButton.innerHTML = 'Rediger besked';
+        });
         // Prevent the form submission if the message content is empty
         document.querySelector('#message-form').addEventListener('submit', (event) => {
             if (!document.querySelector('#textbox3').value) {
