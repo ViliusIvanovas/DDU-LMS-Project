@@ -122,7 +122,7 @@ class Classes
         return self::getClassById($class_id);
     }
 
-    public static function getAllAssignmentsByStudent($userId)
+    public static function getAllAssignmentsByStudent($userId, $role = 'student')
     {
         // get all of users classes
         $classes = Classes::getAllClassesByUserId($userId);
@@ -136,7 +136,8 @@ class Classes
         $classIdsStr = implode(',', $classIds);
 
         // get all assignments for the classes
-        $sql = "SELECT * FROM assignments WHERE class IN ($classIdsStr)";
+        $order = $role === 'teacher' ? 'DESC' : 'ASC';
+        $sql = "SELECT * FROM assignments WHERE class IN ($classIdsStr) ORDER BY due_date $order";
         $assignments = Database::getInstance()->query($sql)->results();
 
         return $assignments;
@@ -185,14 +186,24 @@ class Classes
     {
         $db = Database::getInstance();
 
-        $data = $db->get('submissions', array('user_id', '=', $user_id, 'AND', 'assignment_id', '=', $assignment_id));
+        // Get all submissions by user_id
+        $data = $db->get('assignment_submissions', array('user', '=', $user_id));
 
         if ($data === false || !$data->count()) {
             return null; // Return null if no submission is found or if a database error occurs
         }
 
-        return $data->first();
+        $filteredData = array_filter($data->results(), function ($submission) use ($assignment_id) {
+            return isset($submission->assignment) && $submission->assignment == $assignment_id;
+        });
+
+        if (empty($filteredData)) {
+            return null; // Return null if no submission is found for the specified assignment_id
+        }
+
+        return reset($filteredData); // Return the first submission that matches the assignment_id
     }
+
     public static function getAllTimeModuleByClass($class_id, $date)
     {
         $db = Database::getInstance();

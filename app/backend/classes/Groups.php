@@ -124,9 +124,10 @@ class Groups
         }
     }
 
-    public static function removeEmptyGroups() {
+    public static function removeEmptyGroups()
+    {
         $db = Database::getInstance();
-    
+
         // Delete groups with no participants
         $db->query("DELETE FROM `groups` WHERE group_id NOT IN (SELECT group_id FROM group_participants)");
     }
@@ -142,7 +143,7 @@ class Groups
             return $group;
         }
 
-        return null;        
+        return null;
     }
 
     public static function getGroupById($group_id)
@@ -157,5 +158,12 @@ class Groups
         $group = Database::getInstance()->get('`groups`', array('group_id', '=', $group_id));
 
         return $group->first()->group_room;
+    }
+
+    public static function getGroupRoomById($group_room_id)
+    {
+        $group_room = Database::getInstance()->get('`group_rooms`', array('group_room_id', '=', $group_room_id));
+
+        return $group_room->first();
     }
 }
