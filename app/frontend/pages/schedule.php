@@ -73,7 +73,7 @@
 
     td.day {
         position: relative;
-        /* Other styles... */
+        padding: 0;
     }
 
     .dropdown {
@@ -192,7 +192,8 @@
                                                             } ?>
                                                         </select>
                                                         <input type='hidden' name='time_module_id' value='<?php echo $subject->time_module_id; ?>'>
-                                                        <input type='hidden' name='start_date' value='<?php echo $subject->start_time; ?>'>                                                    </form>
+                                                        <input type='hidden' name='start_date' value='<?php echo $subject->start_time; ?>'>
+                                                    </form>
                                                 </div>
                                             </h4>
 
