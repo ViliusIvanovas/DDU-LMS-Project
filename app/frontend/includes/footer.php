@@ -18,7 +18,7 @@
 
 <div id="footer" class="jumbotron text-center footer bg-body-tertiary" style="margin-bottom:0">
   <h6><a href="site-policies.php" class="text-body">Site Policies</a></h6>
-  <h6>© 2023. UWU games (I/S)</h6>
+  <h6>© 2024. UWU games (I/S)</h6>
 </div>
 
 </body>

@@ -1,79 +1,34 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Site Policies</title>
 </head>
+
 <body>
     <div class="container" style="margin-top: 60px; margin-bottom: 60px">
-        <h1 style="font-family: 'Times New Roman', Times, serif;">Site Policies</h1>
-
+        <h1 style="font-family: 'Times New Roman', Times, serif;">Retningslinjer</h1>
         <br>
 
-        <h2 style="font-family: 'Times New Roman', Times, serif;">1. Data Safety and Privacy Policy</h2>
-        <h4 style="font-family: 'Times New Roman', Times, serif;">1.1 Minimal Data Collection:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">We only collect essential data for your account, such as username, encrypted password hash, and email.</li>
-            <li style="font-family: 'Times New Roman', Times, serif;">Data is stored securely and used internally, unless explicitly made public by you (e.g., through reviews).</li>
-        </ul>
+        <p style="font-family: 'Times New Roman', Times, serif;">Velkommen til StudX Learning Management System (LMS). Vi ønsker at skabe et sikkert og produktivt læringsmiljø for vores elever, lærere, censorer og administratorer. For at sikre, at vores LMS fungerer effektivt og opfylder vores brugeres behov, har vi udarbejdet følgende retningslinjer. Disse retningslinjer ikke alene fastlægger, hvordan vores websted skal anvendes, men tjener også til at beskytte vores brugeres persondata og sikre, at det behandles ansvarligt og sikkert.</p>
 
-        <h4 style="font-family: 'Times New Roman', Times, serif;">1.2 Encryption:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">Passwords are encrypted using the PHP hash function, ensuring a high level of security.</li>
-            <li style="font-family: 'Times New Roman', Times, serif;">Decryption of passwords is practically impossible.</li>
-        </ul>
+        <h2 style="font-family: 'Times New Roman', Times, serif;">Beskyttelse af Personlige Oplysninger:</h2>
+        <p style="font-family: 'Times New Roman', Times, serif;">I StudX har vi valgt at undlade at fokusere på cases, hvor særligt følsomme oplysninger som CPR-numre er nødvendige. Vi erkender, at der er grænser for, hvor sikre vores hjemmesider kan være, især når man kombinerer et studieadministrativt system med et læringssystem. Derfor opfordrer vi vores brugere til at være opmærksomme på deling af personlige oplysninger og at tage de nødvendige forholdsregler for at beskytte deres data.</p>
 
-        <h4 style="font-family: 'Times New Roman', Times, serif;">1.3 Deleting Account:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">Upon account deletion, all user-generated content, including reviews and order history, will be permanently removed from our system.</li>
-        </ul>
+        <h2 style="font-family: 'Times New Roman', Times, serif;">Opbevaring af Data:</h2>
+        <p style="font-family: 'Times New Roman', Times, serif;">Alle data, der indsamles og gemmes i systemet, vil kun blive opbevaret i maksimalt 30 år, med visse undtagelser, hvor kortere opbevaringsperioder kan være passende. Vi forpligter os til at følge gældende databeskyttelseslovgivning og at sikre, at vores dataopbevaringspraksis er i overensstemmelse med disse regler.</p>
 
-        <br>
+        <h2 style="font-family: 'Times New Roman', Times, serif;">Sikkerhed og Adgangskontrol:</h2>
+        <p style="font-family: 'Times New Roman', Times, serif;">Vi vil implementere sikkerhedsforanstaltninger og adgangskontroller for at beskytte vores system mod uautoriseret adgang og misbrug. Dette inkluderer brugeridentifikation og autentifikation, samt opdeling af brugerroller og rettigheder for at sikre, at brugere kun har adgang til relevante oplysninger og funktioner.</p>
 
-        <h2 style="font-family: 'Times New Roman', Times, serif;">2. Moderation and User Access</h2>
-        <h4 style="font-family: 'Times New Roman', Times, serif;">2.1 Moderation Panel:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">Certain users have access to a moderation panel with limited access to sensitive user data.</li>
-            <li style="font-family: 'Times New Roman', Times, serif;">Moderators can view user-related variables (e.g., admin or verified status, username, email, join date, last updated date), excluding password hashes.</li>
-        </ul>
+        <h2 style="font-family: 'Times New Roman', Times, serif;">Brugervenlighed og Fleksibilitet:</h2>
+        <p style="font-family: 'Times New Roman', Times, serif;">Vi stræber efter at skabe en brugervenlig og fleksibel platform, der kan imødekomme behovene hos både elever, lærere, censorer og administratorer. Vi vil tage hensyn til feedback og forslag fra vores brugere for at sikre, at vores LMS fortsat udvikler sig i overensstemmelse med deres behov og forventninger.</p>
 
-        <br>
+        <p style="font-family: 'Times New Roman', Times, serif;">Ved at bruge vores LMS accepterer du disse retningslinjer og forpligter dig på at overholde dem. Hvis du har spørgsmål eller bekymringer om vores LMS generelt, er du velkommen til at kontakte os.</p>
 
-        <h2 style="font-family: 'Times New Roman', Times, serif;">3. Email Usage and Communication</h2>
-        <h4 style="font-family: 'Times New Roman', Times, serif;">3.1 Purpose of Email:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">Your email is used solely for account verification, order-related communication, and password resets.</li>
-        </ul>
-
-        <h4 style="font-family: 'Times New Roman', Times, serif;">3.2 No Promotional Emails:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">We do not send promotional offers or share your email with any third parties.</li>
-        </ul>
-
-        <br>
-
-        <h2 style="font-family: 'Times New Roman', Times, serif;">4. Webshop Purpose and Disclaimer</h2>
-        <h4 style="font-family: 'Times New Roman', Times, serif;">4.1 Purpose of the Site:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">The site is created for entertainment and educational purposes only.</li>
-            <li style="font-family: 'Times New Roman', Times, serif;">All products listed are fictional; no actual transactions or payments are involved.</li>
-        </ul>
-
-        <br>
-
-        <h2 style="font-family: 'Times New Roman', Times, serif;">5. Copyright Notice</h2>
-        <h4 style="font-family: 'Times New Roman', Times, serif;">5.1 Ownership:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">Emphasize that all content on the website, excluding images, text, and design, is protected by copyright and owned by the webshop.</li>
-        </ul>
-
-        <h4 style="font-family: 'Times New Roman', Times, serif;">5.2 No Reproduction:</h4>
-        <ul>
-            <li style="font-family: 'Times New Roman', Times, serif;">Users are prohibited from reproducing, distributing, or using any content from the site without explicit permission.</li>
-        </ul>
-
-        <br>
-        <p style="font-family: 'Times New Roman', Times, serif;">Please take a moment to familiarize yourself with these rules and guidelines. By using our webshop, you agree to adhere to these policies, ensuring a positive experience for yourself and others. If you have any questions or concerns, feel free to reach out to our support team. Happy shopping!</p>
+        <p style="font-family: 'Times New Roman', Times, serif;">Tak for din deltagelse i StudX Learning Management System!</p>
 
     </div>
 </body>
+
 </html>

@@ -8,8 +8,8 @@
         display: flex;
         align-items: center;
         justify-content: flex-start;
-        font-size: 1.5em;
-        padding-left: 10px;
+        font-size: 2em;
+        border-bottom: 1px solid #5fb6d980;
     }
 
     .section-row {
@@ -195,35 +195,30 @@ $is_teacher = User::isUserTeacherForClass($user->data()->user_id, $class->class_
                     <?php endif; ?>
 
                     <?php if ($type->name == 'Grupper') : ?>
-                        <div class="col-md-2 section-row">
+                        <div class="col-md-4 section-row"> <!-- Adjust the column width as needed -->
                             <div class="card bg-body-tertiary mb-3 section">
-                                <div class="row no-gutters">
-                                    <div class="col-md-12">
-                                        <div class="text-field">
-                                            <h5 class="card-title">
-                                                <?php echo $specific_post->name; ?>
-                                            </h5>
-                                            <?php if (!$is_teacher && Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id)) :
-                                                $group_id = Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id);
-                                                $group = Groups::getGroupById($group_id->group_id);
-                                                $participants = Groups::getGroupsParticipants($group->group_id);
-                                            ?>
-                                                <div class='bg-body-tertiary p-3 my-3'>
-                                                    <h2><?php echo $group->name; ?></h2>
-                                                    <?php foreach ($participants as $participant) : ?>
-                                                        <div>
-                                                            <h5><?php if (isset($participant->student)) echo User::getFullName($participant->student); ?></h5>
-                                                        </div>
-                                                    <?php endforeach; ?>
-                                                </div>
-                                            <?php endif; ?>
-                                            <a href="groups.php?group_room_id=<?php echo $specific_post->group_room_id; ?>&section_id=<?php echo $section_id; ?>">Rediger grupper</a>
-                                        </div>
-                                    </div>
+                                <div class="card-header">
+                                    <h4 class="card-title"><?php echo $specific_post->name; ?></h4>
+                                </div>
+                                <div class="card-body">
+                                    <?php if (!$is_teacher && Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id)) :
+                                        $group_id = Groups::getCurrentGroup($user->data()->user_id, $specific_post->group_room_id);
+                                        $group = Groups::getGroupById($group_id->group_id);
+                                        $participants = Groups::getGroupsParticipants($group->group_id);
+                                    ?>
+                                        <?php foreach ($participants as $participant) : ?>
+                                            <div class="participant">
+                                                <h6><?php if (isset($participant->student)) echo User::getFullName($participant->student); ?></h6>
+                                            </div>
+                                        <?php endforeach; ?>
+                                        <a href="groups.php?group_room_id=<?php echo $specific_post->group_room_id; ?>&section_id=<?php echo $section_id; ?>">Rediger grupper</a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                     <?php endif; ?>
+
+
 
                     <?php if ($type->name == 'Aflevering') :
                         $assignment = Classes::getAssignmentById($specific_post->assignment_id);

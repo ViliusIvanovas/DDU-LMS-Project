@@ -77,26 +77,24 @@ if (isset($_POST['removeEmptyGroupsButton'])) {
 
     <input type="submit" name="addToGroupButton" value="Add to Group">
 </form>
+<div class="group-container">
+    <?php
+    foreach ($groups as $group) {
+    ?>
+        <div class="group-box">
+            <h4 class="group-name"><? echo $group->name; ?> medlemmer:</h4>
+            <?php
+            $participants = Groups::getGroupsParticipants($group->group_id);
+            ?>
 
-<?php
-foreach ($groups as $group) {
-?>
-    <div>
-        <h1><? echo $group->name; ?></h1>
-        <?php
-        $participants = Groups::getGroupsParticipants($group->group_id);
-        ?>
-
-        <div>
-            <h2>Participants</h2>
             <div>
                 <?php foreach ($participants as $participant) : ?>
-                    <div>
-                        <h3><?php
+                    <div class="participant">
+                        <h6><?php
                             if (isset($participant->student)) {
                                 echo User::getFullName($participant->student);
                             }
-                            ?></h3>
+                            ?></h6>
 
                         <!-- Form for leaving a group -->
                         <?php if (Groups::isInGroup($participant->student, $group->group_id) && $participant->student == $user->data()->user_id) : ?>
@@ -110,10 +108,10 @@ foreach ($groups as $group) {
                 <?php endforeach; ?>
             </div>
         </div>
-    </div>
-<?php
-}
-?>
+    <?php
+    }
+    ?>
+</div>
 
 <!-- Form for adding a new group -->
 <form method="post">

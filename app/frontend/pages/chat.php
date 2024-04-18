@@ -389,6 +389,7 @@ foreach ($classes as $class) {
     });
 </script>
 <style>
+    
     .modal {
         display: none;
         /* Hidden by default */

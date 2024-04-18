@@ -292,6 +292,45 @@ body.dark .background-sidebar {
     box-shadow: #39303044 0px 0px 10px 0px;
 }
 
+.group-box {
+    border: 1px solid #5FB6D9;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 95%;
+}
+
+.group-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.participant {
+    border-bottom: 1px solid #5fb6d980;
+    margin: 10px 0;
+    padding-top: 10px 0;
+    font-size: small;
+}
+
+.group-name {
+    border-bottom: 1px solid #5FB6D9;
+    color: #5FB6D9;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border-bottom: 1px solid #5fb6d980;
+    border-right: 1px solid #5FB6D9;
+    padding: 10px;
+}
+th:last-child, td:last-child {
+    border-right: none;
+}
+
 .emIcon {
     width: 1em;
     height: 1em;
