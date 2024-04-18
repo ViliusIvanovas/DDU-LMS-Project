@@ -88,14 +88,14 @@
     <?php
 
     if ($user->data()->access_level == 3) {
-        ?>
+    ?>
         <div class="row">
             <div class="col-md-12">
                 <a href="build-schedule.php" class="btn btn-primary">Rediger/opstil skema</a>
             </div>
         </div>
         <br>
-        <?php
+    <?php
     }
 
     ?>
@@ -104,12 +104,10 @@
             <div class="scrollable-table">
                 <table class="time-table">
                     <?php
-                    $weeknumber = $_SESSION['weeknumber'];
+                    $weeknumber = isset($_SESSION['weeknumber']) ? $_SESSION['weeknumber'] : Calender::getTodaysWeekNumber();
 
                     if (isset($_GET['weeknumber'])) {
                         $weeknumber = $_GET['weeknumber'];
-                    } else {
-                        $weeknumber = Calender::getTodaysWeekNumber();
                     }
 
                     $year = 2024;
@@ -118,9 +116,7 @@
 
                     <tbody>
                         <tr class="weekdays">
-                            <th>Uge <?php echo $weeknumber ?> (<a
-                                    href="schedule.php?weeknumber=<?php echo $weeknumber - 1; ?>">-</a>/<a
-                                    href="schedule.php?weeknumber=<?php echo $weeknumber + 1; ?>">+</a>)
+                            <th>Uge <?php echo $weeknumber ?> (<a href="schedule.php?weeknumber=<?php echo $weeknumber - 1; ?>">-</a>/<a href="schedule.php?weeknumber=<?php echo $weeknumber + 1; ?>">+</a>)
 
                             </th>
                             <th>Mandag (<?php echo date('d-m', strtotime($dates[0])); ?>)</th>
@@ -146,7 +142,7 @@
 
                             <?php
                             for ($i = 0; $i < 5; $i++) {
-                                ?>
+                            ?>
 
                                 <td class="day">
                                     <?php
@@ -162,35 +158,43 @@
                                     });
 
                                     foreach ($subjects as $subject) {
-                                        $day = date('Y-m-d', strtotime($subject->start_time));
-                                        $class_id = Classes::getClassById($class->class_id)->class_id;
                                         $noteAvailable = Calender::getTimeModuleNotes($subject->time_module_id);
                                         $noteText = '';
                                         if (is_array($noteAvailable) && isset($noteAvailable[0]->text)) {
                                             $noteText = $noteAvailable[0]->text;
                                         }
+                                    ?>
 
-                                        // Add a dropdown menu for each subject
-                                        echo "<div class='dropdown'>";
-                                        echo "<select id='subject_" . $subject->time_module_id . "' class='subject_dropdown' name='subject_" . $subject->time_module_id . "' style='width: 40px;' onchange='handleSelectChange(this)' data-day='" . $day . "' data-class-id='" . $class_id . "'>";
-                                        echo "<option value='' style='display: none;'>'''</option>";
-                                        echo "<option value='start'>Start fraværsårsag herfra</option>";
-                                        echo "<option value='statistics'>Fraværsstatistik</option>";
-
-                                        // If the current user is a teacher, add a "Register Absence" option
-                                        if ($user->data()->access_level == '2') {
-                                            echo "<option value='absence'>Registrer fravær</option>";
-                                        }
-
-                                        echo "</select>";
-                                        echo "</div>";
-                                        ?>
-
-                                        <div class="subject <?php echo $noteText ? 'subject-note-available' : 'bg-body'; ?>"
-                                            title="<?php echo htmlspecialchars($noteText); ?>">
+                                        <div class="subject <?php echo $noteText ? 'subject-note-available' : 'bg-body'; ?>" title="<?php echo htmlspecialchars($noteText); ?>">
                                             <p><?php echo date('H:i', strtotime($subject->start_time)) . ' - ' . date('H:i', strtotime($subject->end_time)); ?>
                                             </p>
-                                            <h4><?php echo $subject->name; ?></h4>
+                                            <h4><?php echo $subject->name; ?>
+
+                                                <?php
+                                                // use getTeachersIdsByTimeModuleId to get the teachers for the subject
+                                                $teachers = Calender::getTeachersIdsByTimeModuleId($subject->time_module_id);
+
+                                                // Extract teacher IDs from the objects
+                                                $teacherIds = array_map(function ($teacher) {
+                                                    return $teacher->teacher;
+                                                }, $teachers);
+                                                ?>
+
+                                                <div class='dropdown'>
+                                                    <form action='check_abscence.php?time_module_id=<?php echo $subject->time_module_id ?>' method='post'>
+                                                        <select id='subject_<?php echo $subject->time_module_id; ?>' class='subject_dropdown' name='subject_<?php echo $subject->time_module_id; ?>' style='width: 40px;' onchange='this.form.submit()'>
+                                                            <option value='' style='display: none;'>'''</option>
+                                                            <option value='start'>Start fraværsårsag herfra</option>
+                                                            <option value='statistics'>Fraværsstatistik</option>
+                                                            <?php
+                                                            if (in_array($user->data()->user_id, $teacherIds)) {
+                                                                echo "<option value='absence'>Registrer fravær</option>";
+                                                            } ?>
+                                                        </select>
+                                                        <input type='hidden' name='time_module_id' value='<?php echo $subject->time_module_id; ?>'>
+                                                        <input type='hidden' name='start_date' value='<?php echo $subject->start_time; ?>'>                                                    </form>
+                                                </div>
+                                            </h4>
 
                                             <?php
                                             $teachers = Calender::getTeachersIdsByTimeModuleId($subject->time_module_id);
@@ -230,13 +234,13 @@
                                             </p>
                                         </div>
 
-                                        <?php
+                                    <?php
                                         echo "</div>";
                                     }
                                     ?>
                                 </td>
 
-                                <?php
+                            <?php
                             }
                             ?>
                         </tr>
@@ -274,7 +278,7 @@
                     $timeRemaining = 'Time remaining: ' . gmdate('H:i:s', $secondsRemaining);
                 }
 
-                ?>
+            ?>
                 <a href="assignment.php?assignment_id=<?php echo $assignment->assignment_id ?>" class="no-decoration">
                     <div class="card mb-3">
                         <div class="card-body">
@@ -295,7 +299,7 @@
                     </div>
                 </a>
 
-                <?php
+            <?php
             }
             ?>
         </div>
@@ -305,14 +309,14 @@
     <br>
 
     <script>
-        window.onload = function () {
+        window.onload = function() {
             var subjects = document.querySelectorAll('.subject');
             var timelineHeight = document.querySelector('.timeline').offsetHeight;
             var scheduleMinutes = 540; // Total minutes from 08:00 to 17:00
             var vhPerHour = 8; // 8vh is equivalent to 1 hour
             var vhPerMinute = vhPerHour / 60; // Calculate the vh equivalent of 1 minute
 
-            subjects.forEach(function (subject) {
+            subjects.forEach(function(subject) {
                 var timeText = subject.querySelector('p').textContent;
                 var times = timeText.split(' - ');
                 var startTime = times[0];
@@ -327,42 +331,4 @@
                 subject.style.top = (startMinutes * vhPerMinute) + 'vh'; // Convert startMinutes to vh
             });
         };
-
-        function handleSelectChange(dropdown) {
-            // Get the selected option
-            var selectedOption = dropdown.options[dropdown.selectedIndex].value;
-
-            // Check if the selected option is "Registrer fravær"
-            if (selectedOption === 'absence') {
-                // Get the day and class_id
-                var day = dropdown.getAttribute('data-day');
-                var class_id = dropdown.getAttribute('data-class-id');
-
-                // Send the data
-                sendData(selectedOption, day, class_id);
-            }
-        }
-
-        function sendData(option, day, class_id) {
-            // Create a FormData object
-            var formData = new FormData();
-            formData.append('option', option);
-            formData.append('day', day);
-            formData.append('class_id', class_id);
-
-            // Send the data to check_absence.php
-            fetch('check_abscence.php', {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (response.ok) {
-                        // If the request was successful, redirect to check_absence.php
-                        window.location.href = 'check_abscence.php';
-                    } else {
-                        console.error('Error:', response.statusText);
-                    }
-                })
-                .catch(error => console.error('Error:', error));
-        }
     </script>

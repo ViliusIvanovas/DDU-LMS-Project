@@ -1,31 +1,27 @@
 <?php
-if (!isset($_POST['Day']) || !isset($_POST['classID'])) {
-    die('Day or class ID not set in the POST request.');
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $subject_id = $_POST['subject_' . $_POST['time_module_id']];
+    $time_module_id = $_POST['time_module_id'];
+    $start_date = $_POST['start_date'];
 
-// Check if day and class_id are set in the POST request
-if (isset($_POST['day']) && isset($_POST['class_id'])) {
-    // Get the day and class_id from the POST request
-    $day = $_POST['day'];
-    $class_id = $_POST['class_id'];
-} else {
-    // Handle the case where day or class_id are not set in the POST request
-    echo "Day or class ID not set in the POST request.";
-    exit;
+    // Get the day of the week for the start and end dates
+    $start_day = date('l', strtotime($start_date));
+
+    // Get the date from the start date
+    $date = date('Y-m-d', strtotime($start_date));
+
+    $class_ids = Calender::getParticipatingClasses($time_module_id);
+    foreach ($class_ids as $class_id) {
+        // Use $class_id here
+
+    }
 }
-var_dump($_POST);
-// Specify the class ID
-$class_id = '2'; // Replace this with the actual class ID
 
 // Fetch the students in the class
-$students = Classes::getAllStudents($class_id);
-
-// Decide which date to use
-$date = date('d') <= 17 ? date('Y-m-d') : date('Y-m-17');
+$students = Classes::getAllStudents($class_id->class_id);
 
 // Fetch the time modules for the class for the given date
-$time_modules = Classes::getAllTimeModuleByClass($class_id, $date);
-
+$time_modules = Classes::getAllTimeModuleByClass($class_id->class_id, $date);
 // Fetch the subjects for all students for today
 $all_subjects = [];
 foreach ($students as $student) {
@@ -97,8 +93,8 @@ echo "</table>";
 
 <script>
     // When a checkbox is clicked
-    document.querySelectorAll('input[type="checkbox"]').forEach(function (checkbox) {
-        checkbox.addEventListener('click', function () {
+    document.querySelectorAll('input[type="checkbox"]').forEach(function(checkbox) {
+        checkbox.addEventListener('click', function() {
             // Display a popup asking for confirmation
             if (!confirm('Are you sure this person or everyone is present?')) {
                 // If the user clicked "Cancel", uncheck the checkbox
@@ -107,12 +103,12 @@ echo "</table>";
         });
     });
     // When a checkbox in the header is clicked
-    document.querySelectorAll('th input.header_checkbox').forEach(function (checkbox) {
-        checkbox.addEventListener('click', function () {
+    document.querySelectorAll('th input.header_checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('click', function() {
             // Check or uncheck all checkboxes in the same column
             var time_module = this.dataset.timeModule;
             var checked = this.checked;
-            document.querySelectorAll('td input.time_module_' + time_module).forEach(function (checkbox) {
+            document.querySelectorAll('td input.time_module_' + time_module).forEach(function(checkbox) {
                 checkbox.checked = checked;
             });
         });
@@ -120,8 +116,8 @@ echo "</table>";
 
     // When the chekbox in the student gets unchecked then no warning message will be shown
 
-    document.querySelectorAll('td input').forEach(function (checkbox) {
-        checkbox.addEventListener('click', function () {
+    document.querySelectorAll('td input').forEach(function(checkbox) {
+        checkbox.addEventListener('click', function() {
             // Display a popup asking for confirmation
             if (!confirm('Are you sure this person or everyone is present?')) {
                 // If the user clicked "Cancel", uncheck the checkbox
@@ -131,8 +127,8 @@ echo "</table>";
     });
 
     // When a dropdown option is selected
-    document.querySelectorAll('select').forEach(function (dropdown) {
-        dropdown.addEventListener('change', function () {
+    document.querySelectorAll('select').forEach(function(dropdown) {
+        dropdown.addEventListener('change', function() {
             // Check the selected option
             var selectedOption = this.options[this.selectedIndex].value;
             if (selectedOption === 'present' || selectedOption === 'absent') {
