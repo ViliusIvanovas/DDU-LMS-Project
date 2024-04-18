@@ -237,13 +237,17 @@ $is_teacher = User::isUserTeacherForClass($user->data()->user_id, $class->class_
                                                 <?php echo $specific_post->name; ?>
                                             </h5>
                                             <div>
-                                                <h3><?php echo $assignment->name; ?></h3>
-                                                <?php if ($specific_post->group) :
-                                                    $group = Groups::getGroupById($specific_post->group);
-                                                    echo "<h4>" . $group->name . "</h4>";
-                                                else :
-                                                    echo "<h4>Individuel opgave</h4>";
-                                                endif; ?>
+                                                <?php
+                                                $due_date = new DateTime($assignment->due_date);
+                                                $now = new DateTime();
+                                                $interval = $now->diff($due_date);
+                                                $days = $interval->format('%a');
+                                                if ($days > 0) {
+                                                    echo "Aflevering om $days dage";
+                                                } else {
+                                                    echo "Aflevering i dag";
+                                                }
+                                                ?> <br>
                                                 <a href="assignment.php?assignment_id=<?php echo $specific_post->assignment_id; ?>">Se aflevering</a>
                                             </div>
                                         </div>
